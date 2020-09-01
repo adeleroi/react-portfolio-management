@@ -1,0 +1,203 @@
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+.search-input{
+  width: 700px;
+  height: 30px;
+  padding-left: 15px;
+  border-radius: 15px;
+  border: 1px solid black;
+}
+/************** NAV ****************/
+.nav-logo{
+  display: grid;
+  place-items: center;
+}
+.nav-bar{
+  display: grid;
+  place-items: center;
+  background-color: rgb(36, 36, 114);
+
+}
+.nav-items{
+  width: 75%;
+  display: flex;
+  justify-content: space-between;
+  list-style: none
+}
+.item{
+  list-style: none;
+}
+.items-list{
+  display: flex;
+  /* width: 20%; */
+  justify-content: space-between;
+  padding: 0;
+}
+.menu-logo,
+.menu-item{
+  cursor: pointer;
+}
+.nav-link{
+  text-decoration: none;
+  color: white;
+  font-size: 18px;
+}
+/********************** HOME CONTAINER ************************/
+.home-container {
+  background-color: rgb(36, 36, 114);
+  display: grid;
+  place-items: center;
+}
+.container{
+  display: flex;
+  place-items: center;
+  max-width: 75%;
+}
+.banner-info{
+  display: flex;
+  flex-direction: column;
+  place-items: center;
+  width: 30%;
+}
+.banner-title{
+  color: white;
+  width: 100%;
+  text-align: left;
+  font-size: 5vh;
+
+}
+.svg-banner{
+  width: 70%;
+}
+.start-demo-msg{
+  color: white;
+  width: 100%;
+  display: flex;
+  align-self: right;
+}
+.start-demo-btn{
+  color: white;
+  text-decoration: none;
+  border: 1px yellow solid;
+  border-radius: 5px;
+  width: 150px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+
+}
+
+/********************* CHART CONTROL***********************/
+.menu-wrapper{
+  height: 150px;
+  width: 20%;
+}
+.demo-container{
+  display: flex;
+  width:100%;
+  place-items: center;
+}
+.select{
+  background: transparent;
+  border-radius: 15px;
+  height: 25px;
+  margin-bottom: 10px;
+  padding-left: 15px;
+  width: 120px;
+}
+.select-wrapper{
+  display: flex;
+  justify-content: flex-end;
+}
+.btn-wrapper{
+  display: flex;
+  justify-content: flex-end;
+}
+.btn-submit{
+  width: 80px;
+  border-radius: 15px;
+  background-color: rgb(7, 48, 65);
+  color: white;
+  height: 35px;
+}
+.js-plotly-plot{
+  width: 60%;
+}
+.lable-description{
+  font-weight: bold;
+}
+.chartjs-render-monitor{
+  display: block;
+  width: 800px !important;
+  height: 539px !important;
+}
+/******************************* STOCK *******************************/
+.stock-container{
+  max-width: 100%;
+  display: grid;
+  place-items: center;
+}
+.stock-menu-date{
+  width:80%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+}
+.stock-today{
+  width: 100%;
+  text-align: right;
+}
+.stock-stock-menu{
+  display: flex;
+  max-width: 100%;
+  border: 1px solid black;
+}
+.stock-trade-info{
+  width: 50%;
+  display: flex;
+  /* justify-content: space-around; */
+}
+.stock-buy-sell-menu{
+  width: 50%;
+  display: flex;
+  justify-content: space-between;
+  border-left: 1px solid black;
+}
+.stock-infos{
+  width: 300px;
+  display: flex;
+  /* margin-left: 50px; */
+}
+.stock-companyName-exchange{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin-left: 20px;
+}
+.stock-buy-sell{
+  width: 25%;
+  display: flex;
+  justify-content: space-between;
+}
+.stock-buy-btn{
+  border: 1px solid blue;
+  border-radius: 5px;
+  height: 30px;
+  width: 45%;
+  /* display: flex */
+  font-size: 1rem;
+  color: blue;
+  background-color: white;
+}
