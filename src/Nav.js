@@ -13,18 +13,11 @@ export default function Nav(){
                         </Link>
                     </div>
                         <ul className="items-list">
-                            <Link to="/demo" className="nav-link">
+                            <Link to="/portfolio" className="nav-link">
                                 <li className="item">
                                     <span className="menu-item start">Start Demo</span>
                                 </li>
                             </Link>
-{/*                             
-                            <li className="item">
-                                <span className="menu-item">Log in</span>
-                                { isLogin &&
-                                    <span className="menu-item">Log Out</span>
-                                }
-                            </li> */}
                         </ul>
                 </div>
             </div>

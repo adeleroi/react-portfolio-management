@@ -111,26 +111,7 @@ export default function Demo(){
     useEffect(() => {
 
     }) //
-    // const handleSubmit = () =>{
 
-    //     fetch(`${baseUrl}/stock/${symbol}/chart/${range}?token=${Token}`)
-    //         .then(data => data.json())
-    //         .then(x => {
-    //             const date = x.map(el => el.date);
-    //             const open = x.map(el => el.open);
-    //             console.log(date);
-    //             setDataX([...date]);
-    //             setDataY([...open]);
-    //         })
-    //         .catch(e => {console.log(e)});
-    //     getDescription();
-    // }
-    // const getDescription = () => {
-    //     fetch(`${baseUrl}/stock/${symbol}/company?token=${Token}`)
-    //         .then(data => data.json())
-    //         .then(x => setData({...x}))
-    //         .catch(e => {console.log(e)})
-    // }
     return (
         <div>
             <h1>Real time Prices</h1>

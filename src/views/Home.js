@@ -9,7 +9,7 @@ const Home = () => {
                 <div className="banner-info">
                     <h1 className="banner-title">The easiest way to manage your portfolio</h1>
                         <span className="start-demo-msg">
-                            <Link className="start-demo-btn" to="/demo">
+                            <Link className="start-demo-btn" to="/portfolio">
                                 <span>Start Demo</span>
                             </Link>
                         </span>

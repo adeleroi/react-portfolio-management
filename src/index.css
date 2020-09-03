@@ -6,10 +6,14 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
-
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+html, body, #root, #root>div {
+  height: 100%;
+  margin: 0;
+  font-size: 1vw;
 }
 .search-input{
   width: 700px;
@@ -147,9 +151,10 @@ code {
   max-width: 100%;
   display: grid;
   place-items: center;
+  margin-top: 30px;
 }
 .stock-menu-date{
-  width:80%;
+  width:70%;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -162,7 +167,9 @@ code {
 .stock-stock-menu{
   display: flex;
   max-width: 100%;
-  border: 1px solid black;
+  /* border: 1px solid black; */
+  height: 150px;
+  margin-top: 20px;
 }
 .stock-trade-info{
   width: 50%;
@@ -174,6 +181,7 @@ code {
   display: flex;
   justify-content: space-between;
   border-left: 1px solid black;
+  padding-left: 20px;
 }
 .stock-infos{
   width: 300px;
@@ -183,13 +191,25 @@ code {
 .stock-companyName-exchange{
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  /* justify-content: center; */
   margin-left: 20px;
+}
+.stock-symbol-title{
+  font-size: 2rem;
+  font-weight: bold;
+}
+.stock-companyName{
+  font-size: 1.1rem;
+  margin-top: 5px;
 }
 .stock-buy-sell{
   width: 25%;
   display: flex;
   justify-content: space-between;
+}
+.stock-price{
+  font-size: 2rem;
+
 }
 .stock-buy-btn{
   border: 1px solid blue;
@@ -200,4 +220,98 @@ code {
   font-size: 1rem;
   color: blue;
   background-color: white;
+}
+.stock-company-info{
+  width: 100%;
+}
+.stock-company-info{
+  width: 80%;
+}
+/*************** chart container ***********/
+
+.stock-chart-container{
+  width: 70%;
+}
+.stock-data-visualization{
+  width: 100%;
+}
+.stock-chart{
+  width: 100%;
+}
+
+.stock-timeseries-periods{
+  display: flex;
+  list-style: none;
+  width: 25%;
+  justify-content: space-between
+}
+.stock-timeseries-period{
+  cursor: pointer;
+}
+.stock-timeseries-period:active{
+  color: blue;
+}
+.chartjs-render-monitor{
+  /* background-color: red; */
+  display: flex;
+  justify-self: center !important;
+  margin: 0 !important;
+  width: 100% !important;
+  height: 80% ! important;
+  /* width: 340px !important; */
+  font-weight: bold !important;
+}
+.stock-stock-chart{
+  display: flex;
+  justify-content: center;
+  height: 500px !important;
+
+}
+.stock-company-info{
+  display: grid;
+  place-items: center;
+}
+.infos-infos{
+  display: flex;
+  justify-content: space-between;
+  width: 67%;
+  margin-bottom: 15px;
+  /* flex-wrap: wrap; */
+}
+.company.description{
+  display: flex;
+  width: 67%;
+  text-align: left;
+  margin-bottom: 50px;
+  line-height: 25px;
+}
+.labledescription{
+  display: flex;
+  text-align: left;
+  font-weight: bold;
+}
+
+/************************** PORTFOLIO ****************************************/
+.portfolio-container{
+  width: 100%;
+  display: grid;
+  place-items: center;
+}
+.portfolio-holding{
+  width: 80%;
+}
+.portfolio-table{
+  width: 100%;
+}
+td, th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+}
+tr:nth-child(odd) {
+  background-color: #dddddd;
+}
+.buy-sell{
+  display: flex;
+  justify-self: center;
 }
