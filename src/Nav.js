@@ -23,6 +23,3 @@ export default function Nav(){
             </div>
     )
 }
-
-// function logout(){return <span className="menu-item">Log Out</span>}
-// function login(){return <span className="menu-item">Log In</span>}

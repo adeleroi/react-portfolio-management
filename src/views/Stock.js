@@ -52,8 +52,10 @@ const Stock =  (props) => {
     }
     const Token = "pk_99d153747d5a4c939661c8f2fb359437"
     const baseUrl = "https://cloud.iexapis.com/stable"
+    const sandbaseUrl = "https://sandbox.iexapis.com/stable";
+    const sandToken = "Tsk_f449b3b9b1e04ea3b0e1e41c195a4359"
     const handlePeriod = (symbol) =>{
-        fetch(`${baseUrl}/stock/${symbol}/chart/${period}?token=${Token}`)
+        fetch(`${baseUrl}/stock/${symbol}/chart/${period}?token=${sandToken}`)
             .then(data => data.json())
             .then(x => {
                 const date = x.map(el => el.date);
@@ -66,7 +68,7 @@ const Stock =  (props) => {
         getDescription(symbol);
     }
     const getDescription = (symbol) => {
-        fetch(`${baseUrl}/stock/${symbol}/company?token=${Token}`)
+        fetch(`${sandbaseUrl}/stock/${symbol}/company?token=${sandToken}`)
             .then(data => data.json())
             .then(x => setInfos({...x}))
             .catch(e => {console.log(e)})
