@@ -1,6 +1,9 @@
+import { combineReducers } from 'redux'
 import {
     BUY,
     SELL,
+    REQUEST_STOCKS_BEGIN,
+    REQUEST_STOCKS_SUCCESS,
 } from './actionTypes'
 
 const initialState = {
@@ -44,4 +47,32 @@ const transactionReducer = (state = initialState, action) => {
 
 }
 
-export default transactionReducer;
+const requestReducer = (
+    state = {
+    isFetching: false,
+    stockData: null
+    }, action) => {
+    // let updatedState;
+    switch (action.type){
+        case REQUEST_STOCKS_BEGIN:
+            return {
+                ...state,
+                isFetching: true
+            }
+        case REQUEST_STOCKS_SUCCESS:
+            return {
+                ...state,
+                isFetching: false,
+                stockData: action.data
+            }
+        default:
+            return state;
+    }
+}
+
+const rootReducer = combineReducers({
+    transactionReducer,
+    requestReducer
+})
+
+export default rootReducer

@@ -55,7 +55,7 @@ const Stock =  (props) => {
     const sandbaseUrl = "https://sandbox.iexapis.com/stable";
     const sandToken = "Tsk_f449b3b9b1e04ea3b0e1e41c195a4359"
     const handlePeriod = (symbol) =>{
-        fetch(`${baseUrl}/stock/${symbol}/chart/${period}?token=${sandToken}`)
+        fetch(`${sandbaseUrl}/stock/${symbol}/chart/${period}?token=${sandToken}`)
             .then(data => data.json())
             .then(x => {
                 const date = x.map(el => el.date);
@@ -80,7 +80,7 @@ const Stock =  (props) => {
                 <div className="stock-stock-menu">
                     <div className="stock-trade-info">
                         <div className="stock-infos">    
-                            <span className="stock-symbol-title">{companyName}</span>
+                            <span className="stock-symbol-title">{infos.symbol}</span>
                             <div className="stock-companyName-exchange">
                                 <span className="stock-companyName">{infos.companyName}</span>
                                 <span className="stock-exchange">{infos.exchange}</span>

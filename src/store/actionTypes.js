@@ -2,11 +2,12 @@
 
 export const BUY = "BUY";
 export const SELL = "SELL";
-export const REQUEST_STOCKS_DATA = "REQUEST_STOCKS_DATA";
-export const RECEIVE_STOCKS_DATA = "RECEIVE_STOCKS_DATA";
+export const REQUEST_STOCKS_BEGIN = "REQUEST_STOCKS_BEGIN";
+export const REQUEST_STOCKS_SUCCESS = "REQUEST_STOCKS_SUCCESS";
 
 const sandbaseUrl = "https://sandbox.iexapis.com/stable";
 const sandToken = "Tsk_f449b3b9b1e04ea3b0e1e41c195a4359";
+const titres = ['AAPL', 'GOOG', 'AMZN', 'MSFT', 'FB', 'BABA', 'TSLA', 'NVDA', 'CRM', 'PYPL', 'AMD'].join(",");
 
 export const buyStock = (stockObject) =>({
     type: BUY,
@@ -20,22 +21,20 @@ export const sellStock = (stockObject) => ({
     date: Date.now(),
 })
 
-export const requestStocksData = (stock) => ({
-    type: REQUEST_STOCKS_DATA,
-    stock,
+export const requestStocksData = () => ({
+    type: REQUEST_STOCKS_BEGIN,
 })
 
-export const receiveStocksData = (stock, json) => ({
-    type: RECEIVE_STOCKS_DATA,
-    stock,
-    data: json,
+export const receiveStocksData = (stockData) => ({
+    type: REQUEST_STOCKS_SUCCESS,
+    data: stockData
 })
 
-export const fetchStockData = (stock) => {
+export const fetchStockData = () => {
     return dispatch => {
-        dispatch(requestStocksData(stock))
-        return fetch(`${sandbaseUrl}/stock/market/batch?symbols=${stock}&types=company,quote&range=1d&token=${sandToken}`)
+        dispatch(requestStocksData())
+        return fetch(`${sandbaseUrl}/stock/market/batch?symbols=${titres}&types=company,quote&range=1d&token=${sandToken}`)
         .then(x => x.json())
-        .then(x => dispatch(receiveStocksData(stock, json)))
+        .then(x => dispatch(receiveStocksData(x)))
     }
 }
