@@ -48,7 +48,6 @@ export const options = (basePrice) => ({
             onRefresh: function(chart) {
               chart.config.data.datasets.forEach((dataset) => dataset.data.push({
                 x: Date.now(),
-                // y: (Math.random() > 0.5 ? 1.26 : -0.98) * Math.round(Math.random() * 100)
                 y: getData(0.01, basePrice)
               }));
             },

@@ -6,8 +6,8 @@ import Home from './views/Home'
 import Stock from './views/Stock'
 import Portfolio from './views/Portfolio'
 import Action from './views/Action'
-import {fetchStockData} from './store/actionTypes'
-import  { BrowserRouter as Router, Route, Switch,  useHistory } from 'react-router-dom'
+// import {fetchStockData} from './store/actionTypes'
+import  { BrowserRouter as Router, Route, Switch} from 'react-router-dom'
 
 function App(props) {
 
@@ -16,7 +16,7 @@ function App(props) {
   //   dispatch(fetchStockData());
   // }, [])
 
-  
+
   // const { stockData } = props
   return (
       <Router>

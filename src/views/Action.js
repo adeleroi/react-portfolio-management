@@ -36,7 +36,6 @@ const Action = (props) => {
                     <div className="form-info">
                         <label className="form-label">Total :</label>
                         <span>{total}$</span>
-                        {/* <input onChange={(e) => { handleTotal(e.target.value) }} className="form-input"/> */}
                     </div>
                     {actionType === 'buy' &&
                     <button className="form-btn">Buy</button>

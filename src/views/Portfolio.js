@@ -24,7 +24,7 @@ const Portfolio = (props) =>  {
                                 <th>Quantity</th>
                                 <th>Last Price</th>
                                 <th>Change</th>
-                                <th>%Change</th>
+                                <th>High</th>
                                 <th>Volume</th>
                                 <th>Market Cap</th>
                                 <th>Action</th>
@@ -44,7 +44,7 @@ const Portfolio = (props) =>  {
                                     <td>200</td>
                                     <td>{stockData[ob].quote.latestPrice}</td>
                                     <td className={stockData[ob].quote.change > 0 ? 'green-color': 'red-color'}>{stockData[ob].quote.change}</td>
-                                    <td className={stockData[ob].quote.changePercentage > 0 ? 'green-color': 'red-color'}>%{stockData[ob].quote.changePercentage}</td>
+                                    <td >{stockData[ob].quote.high}</td>
                                     <td>{stockData[ob].quote.latestVolume}</td>
                                     <td>{stockData[ob].quote.marketCap}</td>
                                     <td>

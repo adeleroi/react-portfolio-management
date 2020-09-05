@@ -1,27 +1,24 @@
+
 /*React*/
 import * as realTimeConfig from '../chartConfig/realTimeChart'
 import * as lineConfig from '../chartConfig/lineChart'
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import {useLocation} from 'react-router-dom'
 /*chart.js*/
 import { Line } from "react-chartjs-2"
 import "chartjs-plugin-streaming";
-/* Plotly */
-import Plotly from 'plotly.js-basic-dist';
-import createPlotlyComponent from "react-plotly.js/factory";
-const Plot = createPlotlyComponent(Plotly);
+
 
 const Stock =  (props) => {
     const [period, setPeriod] = useState('1D');
     const [dataX, setDataX] = useState([]);
     const [dataY, setDataY] = useState([]);
     const [infos, setInfos] = useState({});
-    const [price, setPrice] = useState(0);
     const date = new Date().toDateString();
     const [isRealTime, setRealTime] = useState(false);
-    const location = useLocation();
     const {slug} = props.match.params;
     const companyName = slug;
+
     useEffect(()=>{
         const {symbol} = props.match.params;
         if (period === 'RT') return
@@ -44,18 +41,13 @@ const Stock =  (props) => {
         }
         document.getElementById(id).style.color = "blue";
     }
-    const capitalize = (s) => {
-        if(typeof(s)!== String){
-            return ''
-        }
-        return s.charAt(0).toUpperCase() + s.slice(1)
-    }
+
     const Token = "pk_99d153747d5a4c939661c8f2fb359437"
     const baseUrl = "https://cloud.iexapis.com/stable"
     const sandbaseUrl = "https://sandbox.iexapis.com/stable";
     const sandToken = "Tsk_f449b3b9b1e04ea3b0e1e41c195a4359"
     const handlePeriod = (symbol) =>{
-        fetch(`${sandbaseUrl}/stock/${symbol}/chart/${period}?token=${sandToken}`)
+        fetch(`${baseUrl}/stock/${symbol}/chart/${period}?token=${Token}`)
             .then(data => data.json())
             .then(x => {
                 const date = x.map(el => el.date);

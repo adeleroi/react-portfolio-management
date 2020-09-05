@@ -52,7 +52,6 @@ const requestReducer = (
     isFetching: false,
     stockData: null
     }, action) => {
-    // let updatedState;
     switch (action.type){
         case REQUEST_STOCKS_BEGIN:
             return {
