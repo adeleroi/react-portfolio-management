@@ -6,15 +6,16 @@ import Home from './views/Home'
 import Stock from './views/Stock'
 import Portfolio from './views/Portfolio'
 import Action from './views/Action'
-// import {fetchStockData} from './store/actionTypes'
+// import Svg from './d3'
+import {fetchStockData} from './store/actionTypes'
 import  { BrowserRouter as Router, Route, Switch} from 'react-router-dom'
 
 function App(props) {
+  const { dispatch, isFetching } = props;
 
-  // useEffect(() => {
-  //   const { dispatch, isFetching } = props;
-  //   dispatch(fetchStockData());
-  // }, [])
+  useEffect(() => {
+    dispatch(fetchStockData());
+  }, [])
 
 
   // const { stockData } = props
@@ -25,6 +26,7 @@ function App(props) {
           <Switch>
             <Route path="/" exact  component={Home} />
             <Route path="/portfolio" exact component={Portfolio}/>
+            {/* <Route path="/svg/:symbol" exact component={(props) => <Svg {...props}/>}/> */}
             <Route path="/stock/:slug/:symbol" exact  component={Stock}/>
             <Route path="/action/:actionType/:symbol" exact component={Action}/>
           </Switch>
@@ -33,10 +35,10 @@ function App(props) {
   ) 
 }
 //component={(props) => <Portfolio {...props} stockData={stockData}/> }
-// const mapStateToProps = state => ({
-//   stockData: state.requestReducer.stockData,
-//   isFetching: state.requestReducer.isFetching,
-// })
-export default App;
+const mapStateToProps = state => ({
+  stockData: state.requestReducer.stockData,
+  isFetching: state.requestReducer.isFetching,
+})
+// export default App;
 
-// export default connect(mapStateToProps)(App);
+export default connect(mapStateToProps)(App);

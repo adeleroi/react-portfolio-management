@@ -1,31 +1,34 @@
 
 /*React*/
-import * as realTimeConfig from '../chartConfig/realTimeChart'
-import * as lineConfig from '../chartConfig/lineChart'
-import React, { useState, useEffect, useRef } from 'react'
-import {useLocation} from 'react-router-dom'
+import * as realTimeConfig from '../chartConfig/realTimeChart';
+import React, { useState, useEffect, useRef } from 'react';
+import {Link} from "react-router-dom";
+import { connect } from 'react-redux';
+import styled from 'styled-components';
+
 /*chart.js*/
 import { Line } from "react-chartjs-2"
 import "chartjs-plugin-streaming";
+import Svg from '../chartConfig/Svg'
 
 
 const Stock =  (props) => {
-    const [period, setPeriod] = useState('1D');
-    const [dataX, setDataX] = useState([]);
-    const [dataY, setDataY] = useState([]);
-    const [infos, setInfos] = useState({});
+    // State
+    const [period, setPeriod] = useState('1M');
     const date = new Date().toDateString();
     const [isRealTime, setRealTime] = useState(false);
     const {slug} = props.match.params;
+    const {symbol} = props.match.params;
     const companyName = slug;
 
-    useEffect(()=>{
-        const {symbol} = props.match.params;
-        if (period === 'RT') return
-        handlePeriod(symbol.toLowerCase());
-    },[props.match.params.symbol, period])
+    // props
+    const { isFetching, stockData } = props
 
-    const handleClick = (period) => {
+    useEffect(()=> {
+        console.log("stockdata",stockData,  isFetching)
+    }, []);
+    // HandleClick
+    const handleClickPeriod = (period) => {
         if (period === "RT"){
             setRealTime(true);
         }else{
@@ -34,6 +37,7 @@ const Stock =  (props) => {
         setPeriod(period);
         changeTab(period);
     }
+    // Extra Layout
     const changeTab = (id) => {
         const periods = document.getElementsByClassName("stock-timeseries-period");
         for (var i = 0; i < periods.length; i++){
@@ -41,29 +45,14 @@ const Stock =  (props) => {
         }
         document.getElementById(id).style.color = "blue";
     }
-
+    // Extra Request
     const Token = "pk_99d153747d5a4c939661c8f2fb359437"
     const baseUrl = "https://cloud.iexapis.com/stable"
     const sandbaseUrl = "https://sandbox.iexapis.com/stable";
     const sandToken = "Tsk_f449b3b9b1e04ea3b0e1e41c195a4359"
-    const handlePeriod = (symbol) =>{
-        fetch(`${baseUrl}/stock/${symbol}/chart/${period}?token=${Token}`)
-            .then(data => data.json())
-            .then(x => {
-                const date = x.map(el => el.date);
-                const open = x.map(el => el.open);
-                console.log(date);
-                setDataX([...date]);
-                setDataY([...open]);
-            })
-            .catch(e => {console.log(e)});
-        getDescription(symbol);
-    }
-    const getDescription = (symbol) => {
-        fetch(`${sandbaseUrl}/stock/${symbol}/company?token=${sandToken}`)
-            .then(data => data.json())
-            .then(x => setInfos({...x}))
-            .catch(e => {console.log(e)})
+
+    if(isFetching || !stockData){
+        return <h1>Loading...</h1>
     }
     return (
         <div className="stock-container">
@@ -72,20 +61,48 @@ const Stock =  (props) => {
                 <div className="stock-stock-menu">
                     <div className="stock-trade-info">
                         <div className="stock-infos">    
-                            <span className="stock-symbol-title">{infos.symbol}</span>
+                            <span className="stock-symbol-title">{stockData[symbol].quote.symbol}</span>
                             <div className="stock-companyName-exchange">
-                                <span className="stock-companyName">{infos.companyName}</span>
-                                <span className="stock-exchange">{infos.exchange}</span>
+                                <span className="stock-companyName">{stockData[symbol].quote.companyName}</span>
+                                <span className="stock-exchange">{stockData[symbol].quote.primaryExchange}</span>
                             </div>
                         </div>
                     </div> 
                     <div className="stock-buy-sell-menu">
                         <div className="stock-price">
-                            <span>{dataY[0]} $</span>
+                            <div style={{display:"flex"}}>{stockData[symbol].quote.close} $</div>
+                            <div className="stock-change-changepercent">
+                                <GreenRed>
+                                    <span className={stockData[symbol].quote.change > 0? 'green': 'red'}>{stockData[symbol].quote.change}</span>
+                                    <span className={stockData[symbol].quote.change > 0? 'green': 'red'}>({stockData[symbol].quote.changePercent})</span>
+                                </GreenRed>
+                            </div>
                         </div>
                         <div className="stock-buy-sell">
-                            <button className="stock-buy-btn"><span>Buy</span></button>
-                            <button className="stock-buy-btn"><span>Sell</span></button>
+                            <button className="stock-buy-btn">
+                                <Link
+                                    to={{
+                                        pathname: `/action/buy/${props.match.params.symbol}`,
+                                        state: {
+                                            stockPrice: stockData[symbol].quote.close
+                                        }
+                                    }}
+                                >
+                                    <span>Buy</span>
+                                </Link>
+                            </button>
+                            <button className="stock-buy-btn" >
+                                <Link 
+                                    to={{
+                                        pathname: `/action/sell/${props.match.params.symbol}`,
+                                        state: {
+                                            stockPrice: stockData[symbol].quote.close
+                                        }
+                                    }}    
+                                >
+                                    <span>Sell</span>
+                                </Link>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -95,42 +112,58 @@ const Stock =  (props) => {
                     <div className="stock-chart">
                         <div className="stock-timeseries-menu">
                             <ul className="stock-timeseries-periods">
-                                <li className="stock-timeseries-period" id="RT" onClick={(e) => handleClick("RT")}>Real time</li>
-                                <li className="stock-timeseries-period" id="1D" onClick={(e) => handleClick("1D")}>1D</li>
-                                <li className="stock-timeseries-period" id="1W" onClick={(e) => handleClick("1W")}>1W</li>
-                                <li className="stock-timeseries-period" id="1M" onClick={(e) => handleClick("1M")}>1M</li>
-                                <li className="stock-timeseries-period" id="3M" onClick={(e) => handleClick("3M")}>3M</li>
+                                <li className="stock-timeseries-period" id="RT" onClick={(e) => handleClickPeriod("RT")}>Real time</li>
+                                <li className="stock-timeseries-period" id="1D" onClick={(e) => handleClickPeriod("1D")}>1D</li>
+                                <li className="stock-timeseries-period" id="5D" onClick={(e) => handleClickPeriod("5D")}>5D</li>
+                                <li className="stock-timeseries-period" id="1M" onClick={(e) => handleClickPeriod("1M")}>1M</li>
+                                <li className="stock-timeseries-period" id="3M" onClick={(e) => handleClickPeriod("3M")}>3M</li>
                             </ul>
                         </div>
                     </div>
                     <div className="stock-stock-chart">
-                        { isRealTime && <Line data={realTimeConfig.data(companyName)} options={realTimeConfig.options(dataY[0])}/>}
-                        {!isRealTime && <Line data={lineConfig.data(dataX, dataY, companyName)} options={lineConfig.options} className="canva-chart"/>}
+                        { isRealTime && <Line data={realTimeConfig.data(companyName)} options={realTimeConfig.options(stockData[symbol].quote.close) } type={'line'}/>}
                     </div>
                 </div>
             </div>
+            { !isRealTime && <Svg period={period} symbol={props.match.params.symbol} className="svg-d3"></Svg>}
+
             <div className="stock-company-info">
                 <div className="infos-infos">
                     <div>
                         <span className="lable-description">Sector </span>
-                        : {infos.sector}
+                        : {stockData[symbol].company.sector}
                     </div>
                     <div>
                         <span className="lable-description">Employees </span>
-                        : {infos.employees}
+                        : {stockData[symbol].company.employees}
                     </div>
                     <div>
                         <span className="lable-description">Industry </span>
-                        : {infos.industry}
+                        : {stockData[symbol].company.industry}
                     </div>
                 </div>
                 <div className="company description">
                     <span className="labledescription">Description</span>
-                     : {infos.description}
+                     : {stockData[symbol].company.description}
                 </div>
             </div> 
         </div>
     )
 }
 
-export default Stock
+const mapStateToProps = state => ({
+    stockData: state.requestReducer.stockData,
+    isFetching: state.requestReducer.isFetching,
+  })
+
+const GreenRed = styled.div`
+  .green{
+      color: green;
+  }
+  .red{
+      color: red;
+  }
+
+`
+
+export default connect(mapStateToProps)(Stock);

@@ -16,7 +16,7 @@ const Portfolio = (props) =>  {
         return (
             <PortfolioContainer>
                 <div className="portfolio-holding">
-                <h3 className="portfolio-holding-title">Holding</h3>
+                <h3 className="portfolio-holding-title">Holdings</h3>
                     <table className="portfolio-table">
                         <thead>
                             <tr>
@@ -24,7 +24,7 @@ const Portfolio = (props) =>  {
                                 <th>Quantity</th>
                                 <th>Last Price</th>
                                 <th>Change</th>
-                                <th>High</th>
+                                <th>%Change</th>
                                 <th>Volume</th>
                                 <th>Market Cap</th>
                                 <th>Action</th>
@@ -44,7 +44,7 @@ const Portfolio = (props) =>  {
                                     <td>200</td>
                                     <td>{stockData[ob].quote.latestPrice}</td>
                                     <td className={stockData[ob].quote.change > 0 ? 'green-color': 'red-color'}>{stockData[ob].quote.change}</td>
-                                    <td >{stockData[ob].quote.high}</td>
+                                    <td className={stockData[ob].quote.changePercent > 0 ? 'green-color': 'red-color'}>{stockData[ob].quote.changePercent}</td>
                                     <td>{stockData[ob].quote.latestVolume}</td>
                                     <td>{stockData[ob].quote.marketCap}</td>
                                     <td>

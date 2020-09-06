@@ -16,15 +16,42 @@ var chartColors = {
           backgroundColor: "rgb(255, 99, 132)",
           lineTension: 0,
           fill: false,
-          borderWidth: 3,
-          data: dataY
+          borderWidth: 1,
+          data: dataY,
+          pointStyle: 'none',
         }
 
       ]
     });
   export const options =  {
+      layout:{
+        padding:{
+          left: 0,
+          right: 0,
+          bottom: 20,
+          top: 30
+        }
+      },
+      elements:{
+        point:{
+          radius: 0
+        }
+      },
+      plugins:{
+        streaming: false
+      },
       scales: {
         xAxes: [{
+          gridLines: {
+            dispdlay: false,
+            drawBorder: true,
+          },
+          type: 'time',
+          distribution: "linear",
+          offset: true,
+          time:{
+            unit:'day'
+          },
           display: true,
           scaleLabel: {
               display: true,
@@ -32,11 +59,17 @@ var chartColors = {
           }
       }],
         yAxes: [{
+          gridLines: {
+            display: false,
+            drawBorder: true,
+          },
           display: true,
           scaleLabel: {
             display: true,
-            labelString: 'Open price'
+            labelString: 'Close price'
           },
+          ticks:{
+          }
         }]
       },
       tooltips: {
@@ -50,7 +83,7 @@ var chartColors = {
       legend: {
           labels: {
               font: {
-                  color: "red",
+                  // color: "red",
                   size: 16,
               }
           }

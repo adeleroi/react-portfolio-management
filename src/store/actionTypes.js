@@ -36,7 +36,7 @@ export const receiveStocksData = (stockData) => ({
 export const fetchStockData = () => {
     return dispatch => {
         dispatch(requestStocksData())
-        return fetch(`${baseUrl}/stock/market/batch?symbols=${titres}&types=company,quote&range=1d&token=${Token}`)
+        return fetch(`${sandbaseUrl}/stock/market/batch?symbols=${titres}&types=company,quote&range=1d&token=${sandToken}`)
         .then(x => x.json())
         .then(x => dispatch(receiveStocksData(x)))
     }

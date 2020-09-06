@@ -5,20 +5,27 @@ const Action = (props) => {
     const { actionType, symbol } = props.match.params
     const [quantity, setQuantity] = useState(0);
     const [total, setTotal] = useState(0);
-    const [price, setPrice] = useState(0);
-    const handleTotal = (value) => { setTotal(value) };
+    
+    // handle Function
     const handleQuantity = (value) => { setQuantity(value) };
     const handleSubmit = (e) => {
         e.preventDefault();
-        
+        // setQuantity(0);
     }
+    // hooks
     useEffect(() => {
-        getTotal(price, quantity)
-        return () => {
-        }
+        setTotal(props.location.state.stockPrice * quantity)
     }, [quantity])
-    const getTotal = (p, q) => {
-        return setTotal(p * q)
+    
+    // extra Function
+    var formatter = new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+    });
+
+    const getTotal = () => {
+        return props.location.state.stockPrice * quantity
+            
     }
     return (
         <ActionWrapper>
@@ -27,7 +34,7 @@ const Action = (props) => {
                     <h1 className="form-title">{symbol}</h1>
                     <div className="form-info">
                         <label className="form-label">Current Price :</label>
-                        <span> {price}$</span>
+                        <span>{formatter.format(props.location.state.stockPrice)}</span>
                     </div>
                     <div className="form-info">
                         <label className="form-label">Quantity : </label>
@@ -35,7 +42,7 @@ const Action = (props) => {
                     </div>
                     <div className="form-info">
                         <label className="form-label">Total :</label>
-                        <span>{total}$</span>
+                        <span>{formatter.format(total)}</span>
                     </div>
                     {actionType === 'buy' &&
                     <button className="form-btn">Buy</button>
@@ -53,7 +60,7 @@ const ActionWrapper = styled.div`
     display: grid;
     place-items: center;
     width: 100%;
-    height: 100%;
+    height: calc(100% - 47px);
 `
 const FormWrappper = styled.div`
     display: grid;
@@ -90,6 +97,7 @@ const FormWrappper = styled.div`
     .form-input{
         height: 50%;
         display: flex;
+        align-self: center;
         text-align: right;
         font-size: 1.2rem;
         padding-right: 10px;
