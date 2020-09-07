@@ -4,7 +4,8 @@ export const BUY = "BUY";
 export const SELL = "SELL";
 export const REQUEST_STOCKS_BEGIN = "REQUEST_STOCKS_BEGIN";
 export const REQUEST_STOCKS_SUCCESS = "REQUEST_STOCKS_SUCCESS";
-
+export const GET_PORTFOLIO_DATA = "GET_PORTFOLIO_DATA";
+export const GET_TOTAL_HOLDINGS = "GET_TOTAL_HOLDINGS";
 
 const Token = "pk_99d153747d5a4c939661c8f2fb359437"
 const baseUrl = "https://cloud.iexapis.com/stable"
@@ -38,6 +39,17 @@ export const fetchStockData = () => {
         dispatch(requestStocksData())
         return fetch(`${sandbaseUrl}/stock/market/batch?symbols=${titres}&types=company,quote&range=1d&token=${sandToken}`)
         .then(x => x.json())
-        .then(x => dispatch(receiveStocksData(x)))
+        .then(x => {dispatch(getPortfolioData(x));dispatch(receiveStocksData(x))})
+        // .then(x => )
     }
 }
+
+export const getPortfolioData = (data) =>({
+    type: GET_PORTFOLIO_DATA,
+    data,
+})
+
+export const getTotalHoldings = () => ({
+    type: "GET_TOTAL_HOLDINGS",
+    total:0
+})

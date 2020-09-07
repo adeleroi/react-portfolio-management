@@ -4,6 +4,7 @@ import {
     SELL,
     REQUEST_STOCKS_BEGIN,
     REQUEST_STOCKS_SUCCESS,
+    GET_PORTFOLIO_DATA
 } from './actionTypes'
 
 const initialState = {
@@ -20,7 +21,7 @@ const transactionReducer = (state = initialState, action) => {
             updatedStocks = [...state.stocks];
             updatedStockIndex = updatedStocks.findIndex(el => el.symbol === action.payload.symbol);
             if(updatedStockIndex < 0){
-                updatedStocks.push({...action.payload, quantity: 1});
+                updatedStocks.push({...action.payload, quantity: action.payload.quantity});
             }else{
                 const boughtStock = { ...updatedStocks[updatedStockIndex] };
                 boughtStock.quantity += action.payload.quantity;
@@ -49,8 +50,9 @@ const transactionReducer = (state = initialState, action) => {
 
 const requestReducer = (
     state = {
-    isFetching: false,
-    stockData: null
+        isFetching: false,
+        stockData: null,
+        portfolioData: null,
     }, action) => {
     switch (action.type){
         case REQUEST_STOCKS_BEGIN:
@@ -63,6 +65,15 @@ const requestReducer = (
                 ...state,
                 isFetching: false,
                 stockData: action.data
+            }
+        case GET_PORTFOLIO_DATA:
+            const symbols = Object.keys(action.data)
+            return {
+                    ...state,
+                    portfolioData: symbols.map(x => ({
+                        symbol: x, close: action.data[x].quote?.latestPrice, quantity: 200
+                    }))
+
             }
         default:
             return state;

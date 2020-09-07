@@ -74,7 +74,7 @@ const Stock =  (props) => {
                             <div className="stock-change-changepercent">
                                 <GreenRed>
                                     <span className={stockData[symbol].quote.change > 0? 'green': 'red'}>{stockData[symbol].quote.change}</span>
-                                    <span className={stockData[symbol].quote.change > 0? 'green': 'red'}>({stockData[symbol].quote.changePercent})</span>
+                                    <span className={stockData[symbol].quote.change > 0? 'green': 'red'}>({stockData[symbol].quote.changePercent}%)</span>
                                 </GreenRed>
                             </div>
                         </div>
@@ -159,9 +159,12 @@ const mapStateToProps = state => ({
 const GreenRed = styled.div`
   .green{
       color: green;
+      font-size: 1.5rem;
+      margin-right: 15px; 
   }
   .red{
       color: red;
+      font-size: 1.5rem
   }
 
 `
