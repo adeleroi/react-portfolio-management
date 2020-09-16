@@ -113,6 +113,7 @@ const Stock =  (props) => {
             <div className="stock-chart-container">
                 <div className="stock-data-visualization">    
                     <div className="stock-chart">
+                    <PeriodStyle>
                         <div className="stock-timeseries-menu">
                             <ul className="stock-timeseries-periods">
                                 <li className="stock-timeseries-period" id="RT" onClick={(e) => handleClickPeriod("RT")}>Real time</li>
@@ -120,8 +121,10 @@ const Stock =  (props) => {
                                 <li className="stock-timeseries-period" id="5D" onClick={(e) => handleClickPeriod("5D")}>5D</li>
                                 <li className="stock-timeseries-period" id="1M" style={{color: "blue"}} onClick={(e) => handleClickPeriod("1M")}>1M</li>
                                 <li className="stock-timeseries-period" id="3M" onClick={(e) => handleClickPeriod("3M")}>3M</li>
+                                <li className="stock-timeseries-period" id="2Y" onClick={(e) => handleClickPeriod("2Y")}>2Y</li>
                             </ul>
                         </div>
+                    </PeriodStyle>
                     </div>
                     <div className="stock-stock-chart">
                         { isRealTime && <Line data={realTimeConfig.data(companyName)} options={realTimeConfig.options(stockData[symbol].quote.close) } type={'line'}/>}
@@ -173,6 +176,15 @@ const GreenRed = styled.div`
       text-decoration: none;
   }
 
+`
+const PeriodStyle = styled.div`
+  .stock-timeseries-menu{
+    box-shadow: 1px 4px 16px rgba(0,0,0,.12)!important;
+    height: 40px;
+    display: flex;
+    place-items: center;
+    border-radius: 5px;
+  }
 `
 
 export default connect(mapStateToProps)(Stock);

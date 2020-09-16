@@ -40,27 +40,26 @@ class Svg extends Component {
         const loadHistorycalPrices =  d3.json(`${this.state.sandbaseUrl}/stock/${symbol}/chart/${period}?token=${this.state.sandToken}`)
         // get and parse the data
         loadHistorycalPrices.then(val => {
+            console.log(val)
             const date = period === "1D" ? val.map(el => el.minute) : val.map(el => el.date);
-            // const parseTime = timeFormat("%H:%M");
-            console.log(val.length);
             const valeur = val.map(el => el.close);
-            this.setState({dataX: [...date]});
-            this.setState({dataY:[...valeur]});
+            const volume = val.map(el => el.volume);
             const liste = []
             // const parseTime = timeFormat("%H:%M")
-            liste.push(date.map((val, index)=> ({date: new Date(val), value: valeur[index]})))
+            liste.push(date.map((val, index)=> ({date: new Date(val), value: valeur[index], volume: volume[index]})))
             const data = liste[0]
             console.log(data[1])
             console.log(typeof(data[1].value))
-            const height = 300;
-            const width = 764;
+            const height = 400;
+            const width = 865//764;
 
             // console.log(this.movingAverage(valeur, 5))
-            const movingAverageData = []
+            const mAData = []
             const movingListe = this.movingAverage(valeur, 5);
-            movingAverageData.push(date.map((val, index) => ({date: new Date(val), value: movingListe[index]})));
-            console.log("movingAverage ", movingAverageData[0])
-            console.log("data ", data)
+            mAData.push(date.map((val, index) => ({date: new Date(val), value: movingListe[index]})));
+            const movingAverageData = mAData[0];
+            // console.log("movingAverage ", movingAverageData[0])
+            // console.log("data ", data)
 
         // Remove previous svg element
             selectAll("svg > *").remove(); // select all element below the svg then remove them
@@ -77,6 +76,8 @@ class Svg extends Component {
             const x = scaleUtc().domain(extent(data, (d) => d.date)).range([margin.left, width - margin.right]);
             const y = scaleLinear().domain([min(data, (d) => d.value), max(data, (d) => d.value)]).nice().range([height - margin.bottom, margin.top]);      
             
+            //set domain and range for the volume bar chart
+            const yVolume = scaleLinear().domain([min(data, (d) => d.volume), max(data, (d) => d.volume)]).range([350, 300]);
             // define moving average
             const MovingAverage = line()
                 .defined(d => !isNaN(d.value))
@@ -121,7 +122,7 @@ class Svg extends Component {
             
             //set the y axis
             const yAxis = g => g
-                .attr("transform", "translate(735,0)")
+                .attr("transform", "translate(835,0)")
                 .call(axisRight(y))
                 .call(g => g.select(".domain").remove())
                 .call(axisRight(y).ticks(5).tickSizeOuter(5).tickSize(-width))
@@ -160,18 +161,33 @@ class Svg extends Component {
                 .attr("stroke-linejoin", "round")
                 .attr("stroke-linecap", "round")
                 .attr("d", Line )
-            //add the moving average
+            
             svg.append("path")
-                .datum(movingAverageData[0])
+                .datum(movingAverageData)
                 .attr("fill", "none")
-                .attr("stroke", "red")
-                .attr("stroke-width", 1)
+                .attr("stroke", "#FF8900")
+                .attr("stroke-width", 0.5)
                 .attr("stroke-linejoin", "round")
-                .attr("stroke-linecap", "round")
-                // .style("stroke", "red")
                 .attr("d", MovingAverage)
-
-
+            //add the volume
+            svg.selectAll()
+                .data(data)
+                .enter()
+                .append('rect')
+                .attr('x', d => x(d.date))
+                .attr('y', d => yVolume(d.volume))
+                .attr('fill', (d, i) => {
+                    if(i === 0) {
+                        return '#03a678';
+                    }else{
+                        return data[i-1].value > d.value ? '#c0392b' : '#03a678'; 
+                    }
+                })
+                .attr('width', period === "2Y" ? 1: 4)
+                .attr('height', d => {
+                    return height - yVolume(d.volume) - 30
+                })
+            
         } )
     }
     componentDidMount(){
