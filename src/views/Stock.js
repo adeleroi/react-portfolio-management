@@ -70,7 +70,7 @@ const Stock =  (props) => {
                     </div> 
                     <div className="stock-buy-sell-menu">
                         <div className="stock-price">
-                            <div style={{display:"flex"}}>{stockData[symbol].quote.close} $</div>
+                            <div style={{display:"flex"}}>{stockData[symbol].quote.latestPrice} $</div>
                             <div className="stock-change-changepercent">
                                 <GreenRed>
                                     <span className={stockData[symbol].quote.change > 0? 'green': 'red'}>{stockData[symbol].quote.change}</span>
@@ -80,11 +80,13 @@ const Stock =  (props) => {
                         </div>
                         <div className="stock-buy-sell">
                             <button className="stock-buy-btn">
+                                
                                 <Link
+                                    style={{textDecoration: "none"}}
                                     to={{
                                         pathname: `/action/buy/${props.match.params.symbol}`,
                                         state: {
-                                            stockPrice: stockData[symbol].quote.close
+                                            stockPrice: stockData[symbol].quote.latestPrice
                                         }
                                     }}
                                 >
@@ -93,10 +95,11 @@ const Stock =  (props) => {
                             </button>
                             <button className="stock-buy-btn" >
                                 <Link 
+                                    style={{textDecoration: "none"}}
                                     to={{
                                         pathname: `/action/sell/${props.match.params.symbol}`,
                                         state: {
-                                            stockPrice: stockData[symbol].quote.close
+                                            stockPrice: stockData[symbol].quote.latestPrice
                                         }
                                     }}    
                                 >
@@ -115,7 +118,7 @@ const Stock =  (props) => {
                                 <li className="stock-timeseries-period" id="RT" onClick={(e) => handleClickPeriod("RT")}>Real time</li>
                                 <li className="stock-timeseries-period" id="1D" onClick={(e) => handleClickPeriod("1D")}>1D</li>
                                 <li className="stock-timeseries-period" id="5D" onClick={(e) => handleClickPeriod("5D")}>5D</li>
-                                <li className="stock-timeseries-period" id="1M" onClick={(e) => handleClickPeriod("1M")}>1M</li>
+                                <li className="stock-timeseries-period" id="1M" style={{color: "blue"}} onClick={(e) => handleClickPeriod("1M")}>1M</li>
                                 <li className="stock-timeseries-period" id="3M" onClick={(e) => handleClickPeriod("3M")}>3M</li>
                             </ul>
                         </div>
@@ -164,7 +167,10 @@ const GreenRed = styled.div`
   }
   .red{
       color: red;
-      font-size: 1.5rem
+      font-size: 1.5rem;
+  }
+  .action-link{
+      text-decoration: none;
   }
 
 `

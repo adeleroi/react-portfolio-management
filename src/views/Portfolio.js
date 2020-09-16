@@ -61,10 +61,16 @@ const Portfolio = (props) =>  {
                                     <td>{formatter.format(stockData[ob].quote.marketCap)}</td>
                                     <td>
                                         <Link to={{
-                                            pathname: `/action/buy/${stockData[ob].company.symbol}`
+                                            pathname: `/action/buy/${stockData[ob].company.symbol}`,
+                                            state:{
+                                                latestPrice: stockData[ob].quote.latestPrice,
+                                            }
                                         }}>Buy</Link> | 
                                         <Link to={{
-                                            pathname: `/action/sell/${stockData[ob].company.symbol}`
+                                            pathname: `/action/sell/${stockData[ob].company.symbol}`,
+                                            state:{
+                                                latestPrice: stockData[ob].quote.latestPrice,
+                                            }                                            
                                         }}>Sell</Link>
                                     </td>
                                 </tr>)})}

@@ -48,7 +48,7 @@ export const options = (basePrice) => ({
             onRefresh: function(chart) {
               chart.config.data.datasets.forEach((dataset) => dataset.data.push({
                 x: Date.now(),
-                y: getData(0.01, basePrice)
+                y: getData(0.03, basePrice)
               }));
             },
           }

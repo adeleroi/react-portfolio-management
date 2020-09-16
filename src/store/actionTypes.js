@@ -40,7 +40,6 @@ export const fetchStockData = () => {
         return fetch(`${sandbaseUrl}/stock/market/batch?symbols=${titres}&types=company,quote&range=1d&token=${sandToken}`)
         .then(x => x.json())
         .then(x => {dispatch(getPortfolioData(x));dispatch(receiveStocksData(x))})
-        // .then(x => )
     }
 }
 

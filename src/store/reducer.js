@@ -27,7 +27,6 @@ const transactionReducer = (state = initialState, action) => {
                 boughtStock.quantity += action.payload.quantity;
                 updatedStocks[updatedStockIndex] = boughtStock;
             }
-
             return { ...state, stocks: updatedStocks };
         
         case SELL:
@@ -48,33 +47,54 @@ const transactionReducer = (state = initialState, action) => {
 
 }
 
-const requestReducer = (
-    state = {
-        isFetching: false,
-        stockData: null,
-        portfolioData: null,
-    }, action) => {
+const requestReducer = (state = { isFetching: false, stockData: null, portfolioData: [] }, action) => {
+    let updatedState;
+    let updatedStockIndex;
+    let  updatedPortfolio;
+
     switch (action.type){
+
         case REQUEST_STOCKS_BEGIN:
             return {
                 ...state,
                 isFetching: true
-            }
+            };
+
         case REQUEST_STOCKS_SUCCESS:
             return {
                 ...state,
                 isFetching: false,
                 stockData: action.data
-            }
+            };
+
         case GET_PORTFOLIO_DATA:
-            const symbols = Object.keys(action.data)
+            const symbols = Object.keys(action.data);
             return {
                     ...state,
                     portfolioData: symbols.map(x => ({
                         symbol: x, close: action.data[x].quote?.latestPrice, quantity: 200
                     }))
+            };
 
+        case BUY:
+            updatedState = {...state};
+            updatedStockIndex = updatedState.portfolioData.findIndex(el => el.symbol === action.payload.symbol);
+            if(updatedStockIndex < 0){
+                updatedState.portfolioData.push(action.payload)
+            }else{
+                updatedPortfolio = [ ...state.portfolioData ];
+                const boughtStock = updatedPortfolio[updatedStockIndex]; //shallow copy
+                boughtStock.quantity += Number(action.payload.quantity);
             }
+            return { ...state, portfolioData: updatedPortfolio };
+            
+        case SELL:
+            updatedPortfolio = [ ...state.portfolioData ];            
+            updatedStockIndex = updatedPortfolio.findIndex((el) => el.symbol === action.payload.symbol);
+            const soldStock = updatedPortfolio[updatedStockIndex];
+            soldStock.quantity -= Number(action.payload.quantity);
+            return { ...state, portfolioData: updatedPortfolio };
+            
         default:
             return state;
     }

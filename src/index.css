@@ -59,9 +59,10 @@ html, body, #root, #root>div {
 }
 /********************** HOME CONTAINER ************************/
 .home-container {
-  background-color: rgb(36, 36, 114);
+  /* background-color: rgb(36, 36, 114); */
   display: grid;
   place-items: center;
+  height: calc(100% - 55px);
 }
 .container{
   display: flex;
@@ -72,10 +73,11 @@ html, body, #root, #root>div {
   display: flex;
   flex-direction: column;
   place-items: center;
+  line-height: 60px;
   width: 30%;
 }
 .banner-title{
-  color: white;
+  color: rgb(36, 36, 114);
   width: 100%;
   text-align: left;
   font-size: 5vh;
@@ -91,12 +93,13 @@ html, body, #root, #root>div {
   align-self: right;
 }
 .start-demo-btn{
+  background-color: rgb(36, 36, 114);
   color: white;
   text-decoration: none;
   border: 1px yellow solid;
   border-radius: 5px;
   width: 150px;
-  height: 40px;
+  height: 60px;
   display: grid;
   place-items: center;
 
