@@ -4,7 +4,7 @@ import './App.css';
 import Nav from './Nav'
 import Home from './views/Home'
 import Stock from './views/Stock'
-import Portfolio from './views/Portfolio'
+import Portfolio from './views/PortfolioContainer'
 import Action from './views/Action'
 // import Svg from './d3'
 import {fetchStockData} from './store/actionTypes'

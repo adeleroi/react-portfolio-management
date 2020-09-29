@@ -1,7 +1,7 @@
 
 /*React*/
 import * as realTimeConfig from '../chartConfig/realTimeChart';
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState } from 'react';
 import {Link} from "react-router-dom";
 import { connect } from 'react-redux';
 import styled from 'styled-components';
@@ -9,7 +9,8 @@ import styled from 'styled-components';
 /*chart.js*/
 import { Line } from "react-chartjs-2"
 import "chartjs-plugin-streaming";
-import Svg from '../chartConfig/Svg'
+import Svg from '../components/Svg'
+import CompanyInfo from '../components/CompanyInfo';
 
 
 const Stock =  (props) => {
@@ -22,11 +23,8 @@ const Stock =  (props) => {
     const companyName = slug;
 
     // props
-    const { isFetching, stockData } = props
+    const { isFetching, stockData } = props;
 
-    useEffect(()=> {
-        console.log("stockdata",stockData,  isFetching)
-    }, []);
     // HandleClick
     const handleClickPeriod = (period) => {
         if (period === "RT"){
@@ -45,14 +43,9 @@ const Stock =  (props) => {
         }
         document.getElementById(id).style.color = "blue";
     }
-    // Extra Request
-    const Token = "pk_99d153747d5a4c939661c8f2fb359437"
-    const baseUrl = "https://cloud.iexapis.com/stable"
-    const sandbaseUrl = "https://sandbox.iexapis.com/stable";
-    const sandToken = "Tsk_f449b3b9b1e04ea3b0e1e41c195a4359"
 
     if(isFetching || !stockData){
-        return <h1>Loading...</h1>
+        return (<h1><span className="icon-spinner9" style={{color: 'rgb(36, 36, 114)'}}></span>Loading...</h1>)
     }
     return (
         <div className="stock-container">
@@ -126,33 +119,12 @@ const Stock =  (props) => {
                         </div>
                     </PeriodStyle>
                     </div>
-                    <div className="stock-stock-chart">
-                        { isRealTime && <Line data={realTimeConfig.data(companyName)} options={realTimeConfig.options(stockData[symbol].quote.close) } type={'line'}/>}
-                    </div>
+                    { isRealTime && <Line data={realTimeConfig.data(companyName)} options={realTimeConfig.options(stockData[symbol].quote.close) } type={'line'}/>}
+                    { !isRealTime && <Svg period={period} symbol={props.match.params.symbol} className="svg-d3"></Svg>}
                 </div>
             </div>
-            { !isRealTime && <Svg period={period} symbol={props.match.params.symbol} className="svg-d3"></Svg>}
-
-            <div className="stock-company-info">
-                <div className="infos-infos">
-                    <div>
-                        <span className="lable-description">Sector </span>
-                        : {stockData[symbol].company.sector}
-                    </div>
-                    <div>
-                        <span className="lable-description">Employees </span>
-                        : {stockData[symbol].company.employees}
-                    </div>
-                    <div>
-                        <span className="lable-description">Industry </span>
-                        : {stockData[symbol].company.industry}
-                    </div>
-                </div>
-                <div className="company description">
-                    <span className="labledescription">Description</span>
-                     : {stockData[symbol].company.description}
-                </div>
-            </div> 
+            {/* { !isRealTime && <Svg period={period} symbol={props.match.params.symbol} className="svg-d3"></Svg>} */}
+            <CompanyInfo stockData={stockData} symbol={symbol} website={props.location.state.website}/>
         </div>
     )
 }

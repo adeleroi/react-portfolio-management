@@ -141,9 +141,6 @@ html, body, #root, #root>div {
 .js-plotly-plot{
   width: 60%;
 }
-.lable-description{
-  font-weight: bold;
-}
 .chartjs-render-monitor{
   display: block;
   width: 800px !important;
@@ -233,7 +230,7 @@ html, body, #root, #root>div {
 /*************** chart container ***********/
 
 .stock-chart-container{
-  width: 70%;
+  width: 85%;
 }
 .stock-data-visualization{
   width: 100%;
@@ -268,28 +265,6 @@ html, body, #root, #root>div {
   /* height: 500px !important; */
 
 }
-.stock-company-info{
-  display: grid;
-  place-items: center;
-}
-.infos-infos{
-  display: flex;
-  justify-content: space-between;
-  width: 67%;
-  margin-bottom: 15px;
-}
-.company.description{
-  display: flex;
-  width: 67%;
-  text-align: left;
-  margin-bottom: 50px;
-  line-height: 25px;
-}
-.labledescription{
-  display: flex;
-  text-align: left;
-  font-weight: bold;
-}
 
 
 /************************** PORTFOLIO ****************************************/
@@ -322,9 +297,24 @@ tr:nth-child(odd) {
   height: 100%;
 }
 .chart-container{
-  width: 90%;
+  width: 100%;
   padding-bottom: 30px;
 }
 .area{
   fill: lightsteelblue;
+}
+/******************************* icon-spinner ******************************************/
+
+@keyframes spinner{
+  0% {
+    transform: rotate(0deg);
+  }
+  100%{
+    transform: rotate(359deg)
+  }
+}
+
+.icon-spinner9{
+  display: inline-block;
+  animation: spinner 2s infinite linear;
 }
