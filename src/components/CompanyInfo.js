@@ -2,10 +2,10 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
-const CompanyInfo = ({stockData, symbol, website}) => {
+const CompanyInfo = ({stockData, symbol}) => {
     return (
         <CompanyInfoStyle>
-            <h2 className="company">About <a className="about-title" href={website}>{symbol}</a>:
+            <h2 className="company">About &nbsp;<a className="about-title" href={`/${stockData[symbol].company.website}`}>{symbol}</a>:
             </h2>
             <div className="stock-company-info">
                 <div className="infos-infos">
@@ -21,10 +21,10 @@ const CompanyInfo = ({stockData, symbol, website}) => {
                         <span className="lable-description">Industry </span>
                         <span>: {stockData[symbol].company.industry}</span>
                     </div>
-                </div>
                 <div className="company description">
                     <span className="lable-description">Description </span>
                     <span>: {stockData[symbol].company.description}</span>
+                </div>
                 </div>
             </div> 
         </CompanyInfoStyle>

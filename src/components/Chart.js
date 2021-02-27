@@ -2,9 +2,10 @@ import React, { useEffect, useRef, useState, Component } from 'react'
 import { select, line, area, axisBottom, timeParse, axisLeft, axisRight, scaleLinear, scaleUtc, extent, max, min, selectAll, timer, timeFormat } from 'd3';
 // import * as d3 from 'd3'
 import * as d3  from 'd3-fetch'
+import { Spiner } from './Spiner';
 
 
-class Svg extends Component {
+class Chart extends Component {
     constructor(props){
         super(props);
         this.state = {
@@ -13,14 +14,15 @@ class Svg extends Component {
             infos: {},
             period: "5Y",
             symbol: "amzn",
-            Token :"pk_99d153747d5a4c939661c8f2fb359437",
-            baseUrl : "https://cloud.iexapis.com/stable",
-            sandbaseUrl : "https://sandbox.iexapis.com/stable",
-            sandToken : "Tsk_f449b3b9b1e04ea3b0e1e41c195a4359",
         }
         this.svgRef = React.createRef();
     };
-
+    fetchConfig = {
+        Token : "pk_99d153747d5a4c939661c8f2fb359437",
+        baseUrl : "https://cloud.iexapis.com/stable",
+        sandbaseUrl : "https://sandbox.iexapis.com/stable",
+        sandToken :"Tsk_f449b3b9b1e04ea3b0e1e41c195a4359",
+    }
     movingAverage(values, N){
         let i = 0; 
         let sum = 0;
@@ -37,7 +39,7 @@ class Svg extends Component {
     };
 
     drawChart(symbol, period){
-        const loadHistorycalPrices =  d3.json(`${this.state.sandbaseUrl}/stock/${symbol}/chart/${period}?token=${this.state.sandToken}`)
+        const loadHistorycalPrices =  d3.json(`${this.fetchConfig.sandbaseUrl}/stock/${symbol}/chart/${period}?token=${this.fetchConfig.sandToken}`)
         // get and parse the data
         loadHistorycalPrices.then(val => {
             console.log(val)
@@ -191,7 +193,6 @@ class Svg extends Component {
         } )
     }
     componentDidMount(){
-        console.log(this.state.sandToken)
         console.log(this.props)
         this.drawChart(this.props.symbol.toLowerCase(), this.props.period);
         
@@ -205,7 +206,7 @@ class Svg extends Component {
     
     render(){
         if(!this.state.dataX.length){
-            return <h3><span className="icon-spinner9" style={{color: 'rgb(36, 36, 114)'}}></span>Loading...</h3>
+            return <Spiner/>
         }
         return (
             <div className="chart-container">
@@ -216,4 +217,4 @@ class Svg extends Component {
 }
 
 
-export default Svg;
+export default Chart;

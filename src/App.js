@@ -4,7 +4,7 @@ import './App.css';
 import Nav from './Nav'
 import Home from './views/Home'
 import Stock from './views/Stock'
-import Portfolio from './views/PortfolioContainer'
+import StockList from './views/PortfolioContainer'
 import Action from './views/Action'
 // import Svg from './d3'
 import {fetchStockData} from './store/actionTypes'
@@ -17,24 +17,20 @@ function App(props) {
     dispatch(fetchStockData());
   }, [])
 
-
-  // const { stockData } = props
   return (
       <Router>
         <div className="App">
           <Nav/>
           <Switch>
             <Route path="/" exact  component={Home} />
-            <Route path="/portfolio" exact component={Portfolio}/>
-            {/* <Route path="/svg/:symbol" exact component={(props) => <Svg {...props}/>}/> */}
-            <Route path="/stock/:slug/:symbol" exact  component={Stock}/>
+            <Route path="/portfolio" exact component={StockList} />
+            <Route path="/stock/:symbol/period/:period" exact  component={Stock}/>
             <Route path="/action/:actionType/:symbol" exact component={Action}/>
           </Switch>
         </div>
       </Router>
   ) 
 }
-//component={(props) => <Portfolio {...props} stockData={stockData}/> }
 const mapStateToProps = state => ({
   stockData: state.requestReducer.stockData,
   isFetching: state.requestReducer.isFetching,

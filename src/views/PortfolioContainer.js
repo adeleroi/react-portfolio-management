@@ -1,63 +1,72 @@
-import React, {useEffect, useState } from 'react';
+import * as React from 'react';
 import { connect } from 'react-redux';
 import {fetchStockData} from '../store/actionTypes'
 import Portfolio from '../components/Portfolio'
 import styled from 'styled-components';
+import formatter from '../utils/formatter'
+import {FullPageSpiner} from '../components/Spiner'
 
-
-const PortfolioContainer = (props) =>  {
+const StockList = (props) =>  {
     const {dispatch, stockData, isFetching, portfolioData} = props;
-    const [demoSymbol, setSymbol] = useState(['AAPL', 'GOOG', 'AMZN', 'MSFT', 'FB', 'BABA', 'TSLA', 'NVDA', 'CRM', 'PYPL', 'AMD']);
-    const formatter = new Intl.NumberFormat('en-US',{
-        style: 'currency',
-        currency: 'USD'
-    })
-    useEffect(()=>{
+    const stockSymbols = ['AAPL', 'GOOG', 'AMZN', 'MSFT', 'FB', 'BABA', 'TSLA', 'NVDA', 'CRM', 'PYPL', 'AMD'];
+
+    React.useEffect(()=>{
             dispatch(fetchStockData());
     }, [])
 
     if(isFetching || !stockData){
-        return( <PortfolioStyle><span className="portfolio-loading">
-                    <span className="icon-spinner9" style={{color: 'rgb(36, 36, 114)'}}></span>
-                    Loading...</span>
-                </PortfolioStyle>)
+        return( 
+            <FullPageSpiner/>
+        )
     }
+
     return (
         <PortfolioStyle>
             <div className="portfolio-holding">
-                <div className="portfolio-infos">
-                    <h3 className="portfolio-holding-title">Holdings</h3>
-                    <div className="portfolio-market-data">
-                        <span className="portfolio-market-value-title">Total Market Value</span>
-                        <span className="portfolio-market-value">
-                            {formatter.format(portfolioData.reduce((ac, ob) => ac + (ob.quantity * ob.close), 0))}
-                        </span>
-                    </div>
-                </div>
-                <table className="portfolio-table">
-                    <thead>
-                        <tr>
-                            <th>Symbol/Name</th>
-                            <th>Quantity</th>
-                            <th>Last Price</th>
-                            <th>Change</th>
-                            <th>%Change</th>
-                            <th>Volume</th>
-                            <th>Market Cap</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {demoSymbol.map(ob => {
-                            return (
-                                <Portfolio stockData={stockData} ob={ob} portfolioData={portfolioData} key={ob}/>
-                            )
-                            })
-                        }
-                    </tbody>
-                </table>
+                <StockHeader portfolioData={portfolioData} />
+                <StockTable stockSymbols={stockSymbols} portfolioData={portfolioData} stockData={stockData}/>
             </div>
         </PortfolioStyle>
+    )
+}
+
+const StockHeader = ({portfolioData}) => {
+    return (
+        <>
+            <div className="portfolio-infos">
+                <h3 className="portfolio-holding-title">Holdings</h3>
+                <div className="portfolio-market-data">
+                    <span className="portfolio-market-value-title">Total Market Value</span>
+                    <span className="portfolio-market-value">
+                        {formatter.format(portfolioData.reduce((ac, ob) => ac + (ob.quantity * ob.close), 0))}
+                    </span>
+                </div>
+            </div>
+        </>
+    )
+}
+
+const StockTable = ({stockSymbols, portfolioData, stockData}) => {
+    return (
+        <>
+            <table className="portfolio-table">
+                <thead>
+                    <tr>
+                        <th>Symbol/Name</th>
+                        <th>Quantity</th>
+                        <th>Last Price</th>
+                        <th>Change</th>
+                        <th>%Change</th>
+                        <th>Volume</th>
+                        <th>Market Cap</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {stockSymbols.map(symbol => <Portfolio stockData={stockData} symbol={symbol} portfolioData={portfolioData} key={symbol}/>)}
+                </tbody>
+            </table>
+        </>
     )
 }
 
@@ -129,4 +138,4 @@ const PortfolioStyle = styled.div`
     }
 `
 
-export default connect(mapStateToProps)(PortfolioContainer);
+export default connect(mapStateToProps)(StockList);

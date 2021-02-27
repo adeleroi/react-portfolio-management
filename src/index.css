@@ -203,7 +203,7 @@ html, body, #root, #root>div {
   margin-top: 5px;
 }
 .stock-buy-sell{
-  width: 25%;
+  width: 130px;
   display: flex;
   justify-content: space-between;
 }
@@ -316,5 +316,5 @@ tr:nth-child(odd) {
 
 .icon-spinner9{
   display: inline-block;
-  animation: spinner 2s infinite linear;
+  animation: spinner 2s linear infinite;
 }
