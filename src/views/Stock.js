@@ -1,50 +1,45 @@
-
-/*React*/
-import * as realTimeConfig from '../chartConfig/realTimeChart';
-import React, { useState } from 'react';
-import {Link} from "react-router-dom";
+import * as React from 'react';
 import { connect } from 'react-redux';
-import styled from 'styled-components';
-
-/*chart.js*/
-import { Line } from "react-chartjs-2"
-import "chartjs-plugin-streaming";
-import Chart from '../components/Chart'
 import CompanyInfo from '../components/CompanyInfo';
-import { sellStock } from '../store/actionTypes';
-import {FullPageSpiner} from '../components/Spiner'
+import formatter from '../utils/formatter'
+import {
+    FullPageSpiner,
+    ActionButton,
+    SubmitActionButton,
+    FormGroup,
+    GreenRed
+} from '../components/lib'
+import {
+    HistoricalPeriod,
+    HistoricalPeriodList,
+    HistoricalChart,
+    VisualizationLayout,
+    HistoricalPeriodMenuLayout,
+    VisualizationProvider,
+} from '../components/visualization'
 
+import {
+    Modal,
+    ModalButtonOpen,
+    ModalContents,
+} from '../components/modal'
+
+import "@reach/dialog/styles.css"
 
 const Stock =  ({history, ...props}) => {
-
-    const [period, setPeriod] = useState(() => props.match.params.period);
     const date = new Date().toDateString();
-    const [isRealTime, setRealTime] = useState(false);
     const {symbol} = props.match.params;
     const { isFetching, stockData } = props;
 
     const handleClickPeriod = (period) => {
         history.push(`/stock/${symbol}/period/${period}`)
-        if (period === "RT"){
-            setRealTime(true);
-        }
-        setPeriod(period);
-    }
-
-    const changeTab = (id) => {
-        const periods = document.getElementsByClassName("stock-timeseries-period");
-        for (var i = 0; i < periods.length; i++){
-            periods[i].style.borderBottom = "none";
-        }
-        document.getElementById(id).style.borderBottom = "2px solid blue";
     }
 
     React.useEffect(() => {
         if(isFetching || !stockData){
             return
         }
-        changeTab(period)
-    }, [period, isFetching])
+    }, [isFetching, stockData])
 
     if(isFetching || !stockData){
         return <FullPageSpiner/>
@@ -52,26 +47,20 @@ const Stock =  ({history, ...props}) => {
     return (
         <div className="stock-container">
             <StockMenuHeader stockData={stockData} symbol={symbol} date={date} {...props}/>
-            <div className="stock-chart-container">
-                <div className="stock-data-visualization">    
-                    <div className="stock-chart">
-                    <PeriodStyle>
-                        <div className="stock-timeseries-menu">
-                            <ul className="stock-timeseries-periods">
-                                <li className="stock-timeseries-period" id="RT" onClick={() => handleClickPeriod("RT")}>Real time</li>
-                                <li className="stock-timeseries-period" id="1D" onClick={() => handleClickPeriod("1D")}>1D</li>
-                                <li className="stock-timeseries-period" id="5D" onClick={() => handleClickPeriod("5D")}>5D</li>
-                                <li className="stock-timeseries-period" id="1M" onClick={() => handleClickPeriod("1M")}>1M</li>
-                                <li className="stock-timeseries-period" id="3M" onClick={() => handleClickPeriod("3M")}>3M</li>
-                                <li className="stock-timeseries-period" id="2Y" onClick={() => handleClickPeriod("2Y")}>2Y</li>
-                            </ul>
-                        </div>
-                    </PeriodStyle>
-                    </div>
-                    {/* { isRealTime && <Line data={realTimeConfig.data(companyName)} options={realTimeConfig.options(stockData[symbol].quote.close) } type={'line'}/>} */}
-                    { !isRealTime && <Chart period={period} symbol={props.match.params.symbol} className="svg-d3"></Chart>}
-                </div>
-            </div>
+            <VisualizationProvider {...props}>
+                <VisualizationLayout>
+                    <HistoricalPeriodMenuLayout>
+                        <HistoricalPeriodList>
+                            <HistoricalPeriod period="1D" onClick={() => handleClickPeriod("1D")}/>
+                            <HistoricalPeriod period="5D" onClick={() => handleClickPeriod("5D")}/>
+                            <HistoricalPeriod period="1M" onClick={() => handleClickPeriod("1M")}/>
+                            <HistoricalPeriod period="3M" onClick={() => handleClickPeriod("3M")}/>
+                            <HistoricalPeriod period="2Y" onClick={() => handleClickPeriod("2Y")}/>
+                        </HistoricalPeriodList>
+                    </HistoricalPeriodMenuLayout>
+                    {<HistoricalChart symbol={symbol}/>}
+                </VisualizationLayout>
+            </VisualizationProvider>
             <CompanyInfo stockData={stockData} symbol={symbol}/>
         </div>
     )
@@ -80,62 +69,42 @@ const Stock =  ({history, ...props}) => {
 const StockCompanyInfo = ({stockData, symbol}) => {
     return (
         <>
-            <div className="stock-trade-info">
-                <div className="stock-infos">    
-                    <span className="stock-symbol-title">{stockData[symbol].quote.symbol}</span>
-                    <div className="stock-companyName-exchange">
-                        <span className="stock-companyName">{stockData[symbol].quote.companyName}</span>
-                        <span className="stock-exchange">{stockData[symbol].quote.primaryExchange}</span>
-                    </div>
-                </div>
-            </div> 
-        </>
-    )
-}
-
-const StockValueInfo = ({stockData, symbol}) => {
-    return (
-        <>
-            <div className="stock-price">
-                <div style={{display:"flex"}}>{stockData[symbol].quote.latestPrice} $</div>
-                <div className="stock-change-changepercent">
-                    <GreenRed>
-                        <span className={stockData[symbol].quote.change > 0? 'green': 'red'}>{stockData[symbol].quote.change}</span>
-                        <span className={stockData[symbol].quote.change > 0? 'green': 'red'}>({stockData[symbol].quote.changePercent}%)</span>
-                    </GreenRed>
-                </div>
+            <div className="stock-infos">    
+                <span className="stock-symbol-title">{stockData[symbol].quote.symbol}</span>
+                <CompanyNameAndExchange stockData={stockData} symbol={symbol}/>
             </div>
         </>
     )
 }
 
-const ActionButton = ({action, match, symbol, stockData}) => {
-    const btnStyle = {
-        textDecoration: "none",
-        color: action === 'buy' ? 'white' : 'rgb(36, 36, 114)',
-        backgroundColor: action == 'buy' ? 'rgb(36, 36, 114)' : 'white',
-        border: '1px solid blue',
-        borderRadius: '3px',
-        height: '30px',
-        width: '60px',
-        fontSize: '1.2rem',
-        display: 'grid',
-        placeItems: 'center'
-    }
+const CompanyNameAndExchange = ({style,stockData, symbol}) => {
+    return (
+        <div style={{display: 'flex', flexDirection: 'column', marginLeft: '20px', ...style}}>
+            <span style={{marginRight: '5px'}}>{stockData && stockData[symbol].quote.companyName}</span>
+            <span>{stockData && stockData[symbol].quote.primaryExchange}</span>
+        </div>
+    )
+}
+
+const StockValueInfo = ({stockData, symbol}) => {
+    const change = stockData[symbol].quote.change
+    const latestPrice = stockData[symbol].quote.latestPrice
+    const changePercent = stockData[symbol].quote.changePercent
     return (
         <>
-            <Link
-                style={btnStyle}
-                to={{
-                    pathname: `/action/${action}/${match.params.symbol}`,
-                    state: {
-                        stockPrice: stockData[symbol].quote.latestPrice
-                    }
-                }}
-            >
-                {action === 'buy' ? 'Buy' :'Sell'}
-
-            </Link>
+            <div className="stock-price">
+                <div style={{display:"flex"}}>{formatter.format(latestPrice)}</div>
+                <div className="stock-change-changepercent">
+                    <GreenRed>
+                        <span className={change > 0? 'green': 'red'} style={{fontSize: ''}}>
+                            {change > 0 ? '+' : null }{change}
+                        </span>
+                        <span className={change > 0? 'green': 'red'}>
+                            ({changePercent}%)
+                        </span>
+                    </GreenRed>
+                </div>
+            </div>
         </>
     )
 }
@@ -150,8 +119,30 @@ const StockMenuHeader = ({stockData, symbol, date, ...props}) => {
                     <div className="stock-buy-sell-menu">
                         <StockValueInfo stockData={stockData} symbol={symbol}/>
                         <div className="stock-buy-sell">
-                            <ActionButton stockData={stockData} action='buy' symbol={symbol} {...props}/>
-                            <ActionButton stockData={stockData} action='sell' symbol={symbol} {...props} />
+                            <Modal>
+                                <ModalButtonOpen>
+                                    <ActionButton variant="primary">Buy</ActionButton>
+                                </ModalButtonOpen>
+                                <ModalContents stockData={stockData} symbol={symbol}>
+                                    <ActionForm
+                                        stockData={stockData}
+                                        symbol={symbol}
+                                        submitButton={<SubmitActionButton>Buy</SubmitActionButton>}
+                                    />
+                                </ModalContents>
+                            </Modal>
+                            <Modal>
+                                <ModalButtonOpen>
+                                    <ActionButton variant="secondary">Sell</ActionButton>
+                                </ModalButtonOpen>
+                                <ModalContents stockData={stockData} symbol={symbol}>
+                                    <ActionForm
+                                        stockData={stockData}
+                                        symbol={symbol}
+                                        submitButton={<SubmitActionButton>Sell</SubmitActionButton>}
+                                    />
+                                </ModalContents>
+                            </Modal>
                         </div>
                     </div>
                 </div>
@@ -160,34 +151,97 @@ const StockMenuHeader = ({stockData, symbol, date, ...props}) => {
     )
 }
 
+
+const ActionForm = ({submitButton, stockData, symbol}) => {
+    const handleSubmit = (e) => {
+        //
+    }
+    return (
+        <form className="form-container" onSubmit={(e) => handleSubmit(e)}>
+            <ActionFormHeader stockData={stockData} symbol={symbol} />
+            <FormGroup>
+                <label className="form-label">Nb of shares : </label>
+                <input 
+                    onChange={(e) => {}} className="form-input quantity" 
+                    placeholder={"Enter a quantity..."}
+                    style={{paddingLeft: '5px', fontSize: '16px'}}
+                />
+            </FormGroup>
+            <FormGroup>
+                <label className="form-label">Order type : </label>
+                <select>
+                    <option>Market</option>
+                    <option>Limit</option>
+                </select>
+            </FormGroup>
+            <FormGroup>
+                <label className="form-label">Expiration : </label>
+                <select>
+                    <option>Good For Day</option>
+                    <option>Good Till Expiry</option>
+                </select>
+
+            </FormGroup>
+            <FormGroup>
+                <label className="form-label">Estimated coast :</label>
+                <span>{formatter.format(0)}</span>
+            </FormGroup>
+            <div>
+                {React.cloneElement(
+                    submitButton,
+                    {type: "submit"},
+                    ...(Array.isArray(submitButton.props.children)
+                    ? submitButton.props.children
+                    : [submitButton.props.children])
+                )}
+            </div>
+        </form>
+    )
+}
+
+const ActionFormHeader = ({stockData, symbol}) => {
+    const change = stockData && stockData[symbol].quote.change
+    const latestPrice = stockData && stockData[symbol].quote.latestPrice
+    const changePercent = stockData && stockData[symbol].quote.changePercent
+    return (
+        <>
+            <h3>Buy shares for {symbol} - {stockData ? stockData[symbol].company.companyName : null} </h3>
+            <FormGroup>
+            <label>Stock price:</label>
+            <div style={{display: 'flex'}}>
+                <div>
+                    <GreenRed  style={{fontSize: '16px', textAlign: 'start'}}>
+                        <span style={{marginRight: '10px'}}>{formatter.format(latestPrice)}</span>
+                        <span className={change > 0? 'green': 'red'} style={{fontSize: '16px'}}>
+                            {change > 0 ? '+' : null }{change}
+                        </span>
+                        <span className={change > 0? 'green': 'red'} style={{fontSize: '16px'}}>
+                            ({changePercent}%)
+                        </span>
+                    </GreenRed>
+                    <CompanyNameAndExchange 
+                        style={{flexDirection: 'row', 
+                            fontSize: '12px',
+                            marginLeft:'0',
+                            marginTop: '6px',
+                            color: 'gray'
+                        }}
+                        stockData={stockData} symbol={symbol}
+                    />
+                </div>
+            </div>
+        </FormGroup>
+    </>
+    )
+}
+
+
+
 const mapStateToProps = state => ({
     stockData: state.requestReducer.stockData,
     isFetching: state.requestReducer.isFetching,
   })
 
-const GreenRed = styled.div`
-  .green{
-      color: green;
-      font-size: 1.5rem;
-      margin-right: 15px; 
-  }
-  .red{
-      color: red;
-      font-size: 1.5rem;
-  }
-  .action-link{
-      text-decoration: none;
-  }
 
-`
-const PeriodStyle = styled.div`
-  .stock-timeseries-menu{
-    box-shadow: 1px 4px 16px rgba(0,0,0,.12)!important;
-    height: 40px;
-    display: flex;
-    place-items: center;
-    border-radius: 5px;
-  }
-`
 
 export default connect(mapStateToProps)(Stock);

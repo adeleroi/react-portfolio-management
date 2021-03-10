@@ -11,7 +11,7 @@ import {fetchStockData} from './store/actionTypes'
 import  { BrowserRouter as Router, Route, Switch} from 'react-router-dom'
 
 function App(props) {
-  const { dispatch, isFetching } = props;
+  const { dispatch } = props;
 
   useEffect(() => {
     dispatch(fetchStockData());

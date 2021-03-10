@@ -6,7 +6,7 @@ import { buyStock, sellStock } from '../store/actionTypes';
 
 const Action = (props) => {
     const { actionType, symbol } = props.match.params;
-    const { dispatch, portfolioData, onClickBuyStock, onClickSellStock } = props; // 
+    const { portfolioData, onClickBuyStock, onClickSellStock } = props; // 
     const [quantity, setQuantity] = useState(0);
     const [total, setTotal] = useState(0);
     
@@ -19,7 +19,7 @@ const Action = (props) => {
     // hooks
     useEffect(() => {
         setTotal(props.location.state.latestPrice * quantity)
-    }, [quantity])
+    }, [quantity, props.location.state.latestPrice])
     
     // extra Function
     var formatter = new Intl.NumberFormat('en-US', {

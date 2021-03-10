@@ -4,11 +4,16 @@ import {fetchStockData} from '../store/actionTypes'
 import Portfolio from '../components/Portfolio'
 import styled from 'styled-components';
 import formatter from '../utils/formatter'
-import {FullPageSpiner} from '../components/Spiner'
+import {FullPageSpiner} from '../components/lib'
 
 const StockList = (props) =>  {
     const {dispatch, stockData, isFetching, portfolioData} = props;
-    const stockSymbols = ['AAPL', 'GOOG', 'AMZN', 'MSFT', 'FB', 'BABA', 'TSLA', 'NVDA', 'CRM', 'PYPL', 'AMD'];
+    const stockSymbols = [
+        'AAPL', 'GOOG', 'AMZN',
+        'MSFT', 'FB', 'BABA',
+        'TSLA', 'NVDA', 'CRM',
+        'PYPL', 'AMD'
+    ];
 
     React.useEffect(()=>{
             dispatch(fetchStockData());
@@ -63,7 +68,11 @@ const StockTable = ({stockSymbols, portfolioData, stockData}) => {
                     </tr>
                 </thead>
                 <tbody>
-                {stockSymbols.map(symbol => <Portfolio stockData={stockData} symbol={symbol} portfolioData={portfolioData} key={symbol}/>)}
+                {stockSymbols.map(symbol => <Portfolio 
+                    stockData={stockData}
+                    symbol={symbol} portfolioData={portfolioData}
+                    key={symbol}/>
+                )}
                 </tbody>
             </table>
         </>

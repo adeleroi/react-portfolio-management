@@ -1,7 +1,6 @@
-import React, { useState } from 'react'
+import React from 'react'
 import {Link} from 'react-router-dom'
 export default function Nav(){
-    const [isLogin , Setlog] = useState(false)
     return (
             <div className="nav-bar">
                 <div className="nav-items">

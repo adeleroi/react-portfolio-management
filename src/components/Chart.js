@@ -1,19 +1,18 @@
-import React, { useEffect, useRef, useState, Component } from 'react'
-import { select, line, area, axisBottom, timeParse, axisLeft, axisRight, scaleLinear, scaleUtc, extent, max, min, selectAll, timer, timeFormat } from 'd3';
+import React, {Component } from 'react'
+import { select, line, area, axisBottom, axisRight, scaleLinear, scaleUtc, extent, max, min, selectAll, scaleTime } from 'd3';
 // import * as d3 from 'd3'
 import * as d3  from 'd3-fetch'
-import { Spiner } from './Spiner';
+import { Spiner } from './lib';
 
 
 class Chart extends Component {
     constructor(props){
         super(props);
         this.state = {
-            dataX: [],
-            dataY: [],
+            status: 'idle',
             infos: {},
-            period: "5Y",
-            symbol: "amzn",
+            period: null,
+            symbol: null,
         }
         this.svgRef = React.createRef();
     };
@@ -39,20 +38,32 @@ class Chart extends Component {
     };
 
     drawChart(symbol, period){
+        this.setState({status: 'pending'})
         const loadHistorycalPrices =  d3.json(`${this.fetchConfig.sandbaseUrl}/stock/${symbol}/chart/${period}?token=${this.fetchConfig.sandToken}`)
+        // if error return undefined
         // get and parse the data
         loadHistorycalPrices.then(val => {
-            console.log(val)
-            const date = period === "1D" ? val.map(el => el.minute) : val.map(el => el.date);
+            this.setState({status: 'resolved'})
+            console.log('val', val)
+            const date = period === "1D" ? 
+            val.map(el => {
+                const dt = `${el.label}`.length >= 7 ?
+                (`${el.date} ${el.label}`)
+                :
+                (`${el.date} ${el.label.slice(0,2).trim()}:00 ${el.label.slice(-2)}`)
+                return dt
+            }) 
+            : val.map(el => el.date);
+
+            console.log('date ', date)
             const valeur = val.map(el => el.close);
             const volume = val.map(el => el.volume);
-            this.setState({dataX: date})
             const liste = []
             // const parseTime = timeFormat("%H:%M")
             liste.push(date.map((val, index)=> ({date: new Date(val), value: valeur[index], volume: volume[index]})))
             const data = liste[0]
-            console.log(data[1])
-            console.log(typeof(data[1].value))
+            console.log('data', data)
+            // console.log(typeof(data[1].value))
             const height = 400;
             const width = 865//764;
 
@@ -61,8 +72,6 @@ class Chart extends Component {
             const movingListe = this.movingAverage(valeur, 5);
             mAData.push(date.map((val, index) => ({date: new Date(val), value: movingListe[index]})));
             const movingAverageData = mAData[0];
-            // console.log("movingAverage ", movingAverageData[0])
-            // console.log("data ", data)
 
         // Remove previous svg element
             selectAll("svg > *").remove(); // select all element below the svg then remove them
@@ -76,7 +85,8 @@ class Chart extends Component {
             const yTitle = "$ Close";
         
             // set the domain (set of all the value we want to display) and the range(range for displaying those value)
-            const x = scaleUtc().domain(extent(data, (d) => d.date)).range([margin.left, width - margin.right]);
+            // const x = scaleUtc().domain(extent(data, (d) => d.date)).range([margin.left, width - margin.right]);
+            const x = scaleTime().domain(extent(data, (d) => d.date)).range([margin.left, width - margin.right]);
             const y = scaleLinear().domain([min(data, (d) => d.value), max(data, (d) => d.value)]).nice().range([height - margin.bottom, margin.top]);      
             
             //set domain and range for the volume bar chart
@@ -198,14 +208,14 @@ class Chart extends Component {
         
     }
     componentDidUpdate(prevProps, pervState){
-        if(prevProps.period != this.props.period) {
+        if(prevProps.period !== this.props.period) {
             console.log("willll")
             this.drawChart(this.props.symbol.toLowerCase(), this.props.period)
         }
     }
     
     render(){
-        if(!this.state.dataX.length){
+        if(this.state.status !== 'resolved'){
             return <Spiner/>
         }
         return (
