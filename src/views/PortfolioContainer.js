@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import {fetchStockData} from '../store/actionTypes'
 import Portfolio from '../components/Portfolio'
 import styled from 'styled-components';
-import formatter from '../utils/formatter'
+import formatCurrency from '../utils/formatter'
 import {FullPageSpiner} from '../components/lib'
 
 const StockList = (props) =>  {
@@ -43,7 +43,7 @@ const StockHeader = ({portfolioData}) => {
                 <div className="portfolio-market-data">
                     <span className="portfolio-market-value-title">Total Market Value</span>
                     <span className="portfolio-market-value">
-                        {formatter.format(portfolioData.reduce((ac, ob) => ac + (ob.quantity * ob.close), 0))}
+                        {formatCurrency(portfolioData.reduce((ac, ob) => ac + (ob.quantity * ob.close), 0))}
                     </span>
                 </div>
             </div>

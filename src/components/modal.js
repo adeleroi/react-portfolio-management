@@ -22,11 +22,11 @@ const ModalButtonClose = ({children: child}) => {
     return React.cloneElement(child, {onClick: () => setIsOpen(false)})
 }
 
-const ModalContentBase = ({children, ...props}) => {
+const ModalContentBase = ({children, ariaLabel, ...props}) => {
     const [isOpen, setIsOpen] = React.useContext(ModalContext)
     return (
-        <Dialog style={{display: 'grid', placeItems: 'center'}} isOpen={isOpen} onDismiss={() => setIsOpen(false)} {...props} >
-            <DialogContent style={{maxWidth: '450px', borderRadius: '3px'}}>{children}</DialogContent>
+        <Dialog style={{display: 'grid', placeItems: 'center'}} isOpen={isOpen} onDismiss={() => setIsOpen(false)} {...props}>
+            <DialogContent style={{maxWidth: '450px', borderRadius: '3px'}} aria-label="Modal content">{children}</DialogContent>
         </Dialog>
         )
 }
@@ -38,7 +38,7 @@ const ModalContents = ({children, ...props}) => {
                 <ModalButtonClose>
                     <CircleButton>
                         <VisuallyHidden>Close</VisuallyHidden>
-                        <span arria-label='hidden'>x</span>
+                        <span aria-hidden>x</span>
                     </CircleButton>
                 </ModalButtonClose>
             </div>

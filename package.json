@@ -9,8 +9,6 @@
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
     "browserslist": "^4.16.3",
-    "chart.js": "^2.9.3",
-    "chartjs-plugin-streaming": "^1.8.0",
     "core-js": "^3.9.0",
     "d3": "^6.1.1",
     "d3-fetch": "^2.0.0",

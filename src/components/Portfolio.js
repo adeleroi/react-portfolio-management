@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {Link} from 'react-router-dom';
-import formatter from '../utils/formatter'
+import formatCurrency from '../utils/formatter'
 
 const Portfolio = ({stockData, symbol, portfolioData}) => {
     return (
@@ -14,11 +14,11 @@ const Portfolio = ({stockData, symbol, portfolioData}) => {
                     </Link>    
                 </td>
                 <td>{portfolioData.find((x) => x.symbol === symbol)?.quantity}</td>
-                <td>{formatter.format(stockData[symbol].quote.latestPrice)}</td>
+                <td>{formatCurrency(stockData[symbol].quote.latestPrice)}</td>
                 <td className={stockData[symbol].quote.change > 0 ? 'green-color': 'red-color'}>{stockData[symbol].quote.change}</td>
                 <td className={stockData[symbol].quote.changePercent > 0 ? 'green-color': 'red-color'}>{stockData[symbol].quote.changePercent}</td>
                 <td>{stockData[symbol].quote.latestVolume}</td>
-                <td>{formatter.format(stockData[symbol].quote.marketCap)}</td>
+                <td>{formatCurrency(stockData[symbol].quote.marketCap)}</td>
                 <td>
                     <Link to={{
                         pathname: `/action/buy/${stockData[symbol].company.symbol}`,
