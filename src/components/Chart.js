@@ -1,5 +1,5 @@
 import React, {Component } from 'react'
-import { select, line, area, axisBottom, axisRight, scaleLinear, scaleUtc, extent, max, min, selectAll, scaleTime } from 'd3';
+import { select, line, area, axisBottom, axisRight, scaleLinear, extent, max, min, selectAll, scaleTime } from 'd3';
 // import * as d3 from 'd3'
 import * as d3  from 'd3-fetch'
 import { Spiner } from './lib';
@@ -82,7 +82,7 @@ class Chart extends Component {
             
             //chart config
             const margin = ({top: 20, right:30, bottom: 30, left: 40});
-            const yTitle = "$ Close";
+            // const yTitle = "$ Close";
         
             // set the domain (set of all the value we want to display) and the range(range for displaying those value)
             // const x = scaleUtc().domain(extent(data, (d) => d.date)).range([margin.left, width - margin.right]);
@@ -208,8 +208,8 @@ class Chart extends Component {
         
     }
     componentDidUpdate(prevProps, pervState){
-        if(prevProps.period !== this.props.period) {
-            console.log("willll")
+        if(prevProps.period !== this.props.period || prevProps.symbol !== this.props.symbol) {
+            // console.log("willll")
             this.drawChart(this.props.symbol.toLowerCase(), this.props.period)
         }
     }

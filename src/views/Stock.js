@@ -1,12 +1,14 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import CompanyInfo from '../components/CompanyInfo';
+import SideMenu from '../components/sidemenu'
+import News from '../components/news'
 import formatCurrency from '../utils/formatter'
 import {
     FullPageSpiner,
     ActionButton,
     SubmitActionButton,
-    GreenRed
+    StockTendency
 } from '../components/lib'
 import {
     HistoricalPeriod,
@@ -22,7 +24,7 @@ import {
     ModalButtonOpen,
     ModalContents,
 } from '../components/modal'
-
+import {fetchStockData} from '../store/actionTypes'
 import {
     ActionForm,
     CompanyNameAndExchange
@@ -33,23 +35,45 @@ import "@reach/dialog/styles.css"
 const Stock =  ({history, ...props}) => {
     const date = new Date().toDateString();
     const {symbol} = props.match.params;
-    const { isFetching, stockData } = props;
+    const { isFetching, stockData, dispatch } = props;
+    
+    const aboutData = React.useCallback(symbol =>({
+        Description: stockData[symbol].company.description,
+        CEO: stockData[symbol].company.CEO,
+        Sector: stockData[symbol].company.sector,
+        Employees: stockData[symbol].company.employees,
+        Industry: stockData[symbol].company.industry.slice(0,8),
+        Website: stockData[symbol].company.website,
+    }),
+    [stockData])
+    
+    const statisticData = React.useCallback(symbol =>({
+        Close: stockData[symbol].quote.close,
+        Volume: stockData[symbol].quote.volume,
+        "Market capitalisation": stockData[symbol].quote.marketCap,
+        // Exchange: stockData[symbol].company.exchange,
+        "Price to earings ratio": stockData[symbol].quote.peRatio,
+        "Previous close": stockData[symbol].quote.previousClose,
+        "Exchange": stockData[symbol].company.exchange.slice(0, 11),
+
+    }),
+    [stockData])
 
     const handleClickPeriod = (period) => {
         history.push(`/stock/${symbol}/period/${period}`)
     }
 
-    React.useEffect(() => {
-        if(isFetching || !stockData){
-            return
-        }
-    }, [isFetching, stockData])
+    React.useEffect(()=>{
+        dispatch(fetchStockData());
+    }, [dispatch])
 
     if(isFetching || !stockData){
         return <FullPageSpiner/>
     }
     return (
-        <div className="stock-container">
+        <div style={{display: 'flex', justifyContent: 'space-between', minHeight: '100vh'}}>
+        <SideMenu stockData={stockData} />
+        <div className="stock-container" style={{minHeight: '100vh',width: '80vw'}}>
             <StockMenuHeader stockData={stockData} symbol={symbol} date={date} {...props}/>
             <VisualizationProvider {...props}>
                 <VisualizationLayout>
@@ -62,10 +86,17 @@ const Stock =  ({history, ...props}) => {
                             <HistoricalPeriod period="2Y" onClick={() => handleClickPeriod("2Y")}/>
                         </HistoricalPeriodList>
                     </HistoricalPeriodMenuLayout>
-                    {<HistoricalChart symbol={symbol}/>}
+                    <HistoricalChart symbol={symbol}/>
                 </VisualizationLayout>
             </VisualizationProvider>
-            <CompanyInfo stockData={stockData} symbol={symbol}/>
+            <div style={{display: 'flex'}}>
+                <News symbol={symbol}/>
+                <div style={{display: 'grid'}}>
+                    <CompanyInfo data={aboutData(symbol)} stockData={stockData} symbol={symbol} title="About"/>
+                    <CompanyInfo data={statisticData(symbol)} stockData={stockData} symbol={symbol} title="Statistics"/>
+                </div>
+            </div>
+        </div>
         </div>
     )
 }
@@ -90,19 +121,26 @@ const StockValueInfo = ({stockData, symbol}) => {
             <div className="stock-price">
                 <div style={{display:"flex"}}>{formatCurrency(latestPrice)}</div>
                 <div className="stock-change-changepercent">
-                    <GreenRed>
-                        <span className={change > 0? 'green': 'red'} style={{fontSize: ''}}>
-                            {change > 0 ? '+' : null }{change}
-                        </span>
-                        <span className={change > 0? 'green': 'red'}>
-                            ({changePercent}%)
-                        </span>
-                    </GreenRed>
+                    <StockTendency  change={change} changePercent={changePercent}/>
                 </div>
             </div>
         </>
     )
 }
+
+// const StockTendency = ({children, change, changePercent, style}) => {
+//     return (
+//         <GreenRed style={style}>
+//             {children}
+//             <span className={change > 0? 'green': 'red'} style={{fontSize: ''}}>
+//                 {change > 0 ? '+' : null }{change}
+//             </span>
+//             <span className={change > 0? 'green': 'red'}>
+//                 ({changePercent}%)
+//             </span>
+//         </GreenRed>
+//     )
+// }
 
 const StockMenuHeader = ({stockData, symbol, date, ...props}) => {
     return (
@@ -118,7 +156,7 @@ const StockMenuHeader = ({stockData, symbol, date, ...props}) => {
                                 <ModalButtonOpen>
                                     <ActionButton variant="primary">Buy</ActionButton>
                                 </ModalButtonOpen>
-                                <ModalContents stockData={stockData} symbol={symbol}>
+                                <ModalContents stockData={stockData} symbol={symbol} ariaLabel="Action form">
                                     <ActionForm
                                         stockData={stockData}
                                         symbol={symbol}
@@ -130,7 +168,7 @@ const StockMenuHeader = ({stockData, symbol, date, ...props}) => {
                                 <ModalButtonOpen>
                                     <ActionButton variant="secondary">Sell</ActionButton>
                                 </ModalButtonOpen>
-                                <ModalContents stockData={stockData} symbol={symbol}>
+                                <ModalContents stockData={stockData} symbol={symbol} ariaLabel="Action form">
                                     <ActionForm
                                         stockData={stockData}
                                         symbol={symbol}
@@ -150,6 +188,8 @@ const StockMenuHeader = ({stockData, symbol, date, ...props}) => {
 const mapStateToProps = state => ({
     stockData: state.requestReducer.stockData,
     isFetching: state.requestReducer.isFetching,
+    portfolioData: state.requestReducer.portfolioData,
+    // titres: state.requestReducer.titres
   })
 
 

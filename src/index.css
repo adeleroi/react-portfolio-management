@@ -56,6 +56,7 @@ html, body, #root, #root>div {
   text-decoration: none;
   color: white;
   font-size: 18px;
+  margin:0 5px;
 }
 /********************** HOME CONTAINER ************************/
 .home-container {
@@ -194,10 +195,6 @@ html, body, #root, #root>div {
   margin-left: 20px;
 }
 
-.stock-companyName-exchange-form{
-
-}
-
 .stock-symbol-title{
   font-size: 2rem;
   font-weight: bold;
@@ -235,6 +232,9 @@ html, body, #root, #root>div {
 }
 .stock-data-visualization{
   width: 100%;
+  border: 1px solid #dcdcdc;
+  border-radius: 15px;
+  margin-bottom: 60px;
 }
 .stock-chart{
   width: 100%;
@@ -244,7 +244,9 @@ html, body, #root, #root>div {
   display: flex;
   list-style: none;
   width: 25%;
-  justify-content: space-between
+  justify-content: space-between;
+  place-items: center;
+
 }
 .stock-timeseries-period{
   cursor: pointer;
@@ -318,4 +320,17 @@ tr:nth-child(odd) {
 .icon-spinner9{
   display: inline-block;
   animation: spinner 2s linear infinite;
+}
+
+/*************************************/
+.active-link{
+  border-bottom: 5px solid white;
+  text-decoration: none;
+  color: white;
+}
+.active{
+  color: rgb(255, 238, 0)
+}
+.active > div{
+  border-right: 10px solid yellow
 }

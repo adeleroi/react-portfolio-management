@@ -51,11 +51,13 @@ const HistoricalPeriodList = ({children}) => {
 
     const [period, setPeriod] = useVisualization()
     const changeTab = (id) => {
-        const periods = document.getElementsByClassName("stock-timeseries-period");
-        for (var i = 0; i < periods.length; i++){
-            periods[i].style.borderBottom = "none";
+        const active = document.getElementsByClassName('active-period')
+        if(active.length){
+            active[0].className = "stock-timeseries-period"
         }
-        document.getElementById(id).style.borderBottom = "2px solid blue";
+        document.getElementById(id).className = "active-period"
+        
+        //  = style;
     }
 
     React.useEffect(() => {
@@ -86,7 +88,19 @@ const PeriodStyle = styled.div`
     height: 40px;
     display: flex;
     place-items: center;
-    border-radius: 5px;
+    align-items: center;
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+    
+  }
+  .active-period{
+    display: grid;
+    height: 30px;
+    width: 30px;
+    place-items: center;
+    background-color: lightsteelblue;
+    border-radius: 50%;
+    color: white;
   }
 `
 export {

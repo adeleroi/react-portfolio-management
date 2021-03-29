@@ -7,17 +7,18 @@ import formatCurrency from '../utils/formatter'
 import {FullPageSpiner} from '../components/lib'
 
 const StockList = (props) =>  {
-    const {dispatch, stockData, isFetching, portfolioData} = props;
-    const stockSymbols = [
-        'AAPL', 'GOOG', 'AMZN',
-        'MSFT', 'FB', 'BABA',
-        'TSLA', 'NVDA', 'CRM',
-        'PYPL', 'AMD'
-    ];
-
+    const {
+        dispatch,
+        stockData,
+        isFetching,
+        portfolioData,
+        titres: stockSymbols
+    } = props;
+    console.log('isFetching', isFetching)
     React.useEffect(()=>{
+
             dispatch(fetchStockData());
-    }, [])
+    }, [dispatch])
 
     if(isFetching || !stockData){
         return( 
@@ -82,7 +83,8 @@ const StockTable = ({stockSymbols, portfolioData, stockData}) => {
 const mapStateToProps = state => ({
     stockData: state.requestReducer.stockData,
     isFetching: state.requestReducer.isFetching,
-    portfolioData: state.requestReducer.portfolioData
+    portfolioData: state.requestReducer.portfolioData,
+    titres: state.requestReducer.titres
   })
 
 const PortfolioStyle = styled.div`

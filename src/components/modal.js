@@ -25,7 +25,10 @@ const ModalButtonClose = ({children: child}) => {
 const ModalContentBase = ({children, ariaLabel, ...props}) => {
     const [isOpen, setIsOpen] = React.useContext(ModalContext)
     return (
-        <Dialog style={{display: 'grid', placeItems: 'center'}} isOpen={isOpen} onDismiss={() => setIsOpen(false)} {...props}>
+        <Dialog 
+            aria-label={ariaLabel} style={{display: 'grid',
+            placeItems: 'center'}} isOpen={isOpen}
+            onDismiss={() => setIsOpen(false)} {...props}>
             <DialogContent style={{maxWidth: '450px', borderRadius: '3px'}} aria-label="Modal content">{children}</DialogContent>
         </Dialog>
         )
@@ -33,7 +36,7 @@ const ModalContentBase = ({children, ariaLabel, ...props}) => {
 
 const ModalContents = ({children, ...props}) => {
     return (
-        <ModalContentBase {...props}>
+        <ModalContentBase>
             <div style={{display:'flex', justifyContent: 'flex-end'}}>
                 <ModalButtonClose>
                     <CircleButton>

@@ -2,77 +2,87 @@ import { combineReducers } from 'redux'
 import {
     BUY,
     SELL,
-    REQUEST_STOCKS_BEGIN,
-    REQUEST_STOCKS_SUCCESS,
-    GET_PORTFOLIO_DATA
+    STOCK_BEGIN,
+    STOCK_SUCCESS,
+    STOCK_ERROR,
+    NEWS_BEGIN,
+    NEWS_ERROR,
+    NEWS_SUCCESS,
+    GET_PORTFOLIO_DATA,
+    titres
 } from './actionTypes'
 
-const initialState = {
-    stocks: [
+const initialState = {isLoading: false, error: null, newsData: null}
 
-    ]
-}
-
-const transactionReducer = (state = initialState, action) => {
-    let updatedStocks;
-    let updatedStockIndex;
-    switch(action.type){
-        case BUY:
-            updatedStocks = [...state.stocks];
-            updatedStockIndex = updatedStocks.findIndex(el => el.symbol === action.payload.symbol);
-            if(updatedStockIndex < 0){
-                updatedStocks.push({...action.payload, quantity: action.payload.quantity});
-            }else{
-                const boughtStock = { ...updatedStocks[updatedStockIndex] };
-                boughtStock.quantity += action.payload.quantity;
-                updatedStocks[updatedStockIndex] = boughtStock;
+const newsReducer = (state = initialState, action) => {
+    const {type, data, error} = action
+    switch(type){
+        case NEWS_BEGIN:
+            return {
+                ...state,
+                isLoading: true,
             }
-            return { ...state, stocks: updatedStocks };
-        
-        case SELL:
-            updatedStocks = [...state.stocks];
-            updatedStockIndex = updatedStocks.findIndex(el => el.symbol === action.payload.symbol)
-            const soldStock = { ...updatedStocks[updatedStockIndex] };
-            soldStock.quantity -= action.payload.quantity;
-            if(soldStock.quantity > 0){
-                updatedStocks[updatedStockIndex] = soldStock;
-            }else{
-                updatedStocks.splice(updatedStockIndex, 1);
+        case NEWS_SUCCESS:
+            return {
+                ...state,
+                isLoading: false,
+                newsData: data.map(val => ({
+                    uuid: val.uuid,
+                    title: val.title,
+                    summary: val.summary,
+                    publisher: val.publisher,
+                    publishAt: val.published_at,
+                    link: val.link,
+                    imageUrl: val.main_image?.resolutions[0].url
+                }))
             }
-            return { ...state, stocks: updatedStocks };
-        
+        case NEWS_ERROR:
+            return {
+                ...state,
+                error,
+            }
         default:
             return state;
     }
 
 }
 
-const requestReducer = (state = { isFetching: false, stockData: null, portfolioData: [] }, action) => {
+const requestReducer = (
+    state = { 
+        isFetching: false, stockData: null,
+        portfolioData: [], news: null, titres, error: null },
+    action) => {
     let updatedState;
     let updatedStockIndex;
     let  updatedPortfolio;
 
     switch (action.type){
-
-        case REQUEST_STOCKS_BEGIN:
+        case STOCK_BEGIN:
             return {
                 ...state,
                 isFetching: true
             };
 
-        case REQUEST_STOCKS_SUCCESS:
+        case STOCK_SUCCESS:
             return {
                 ...state,
                 isFetching: false,
                 stockData: action.data
             };
+        
+        case STOCK_ERROR:
+            return {
+                ...state,
+                isFetching: false,
+                error: action.error
+            }
 
         case GET_PORTFOLIO_DATA:
             const symbols = Object.keys(action.data);
             return {
                     ...state,
                     portfolioData: symbols.map(x => ({
-                        symbol: x, close: action.data[x].quote?.latestPrice, quantity: 200
+                        symbol: x, close: action.data[x].quote?.latestPrice, quantity: 0
                     }))
             };
 
@@ -101,7 +111,7 @@ const requestReducer = (state = { isFetching: false, stockData: null, portfolioD
 }
 
 const rootReducer = combineReducers({
-    transactionReducer,
+    newsReducer,
     requestReducer
 })
 

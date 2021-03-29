@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import * as React from 'react';
 import { connect } from 'react-redux';
 import './App.css';
 import Nav from './Nav'
@@ -6,35 +6,56 @@ import Home from './views/Home'
 import Stock from './views/Stock'
 import StockList from './views/PortfolioContainer'
 import Action from './views/Action'
-// import Svg from './d3'
-import {fetchStockData} from './store/actionTypes'
-import  { BrowserRouter as Router, Route, Switch} from 'react-router-dom'
+import  { Route, Switch } from 'react-router-dom'
+import { Provider } from 'react-redux'
+import configureStore from './store/store'
+import { useAuth0 } from '@auth0/auth0-react';
+import { FullPageSpiner } from './components/lib';
 
-function App(props) {
-  const { dispatch } = props;
 
-  useEffect(() => {
-    dispatch(fetchStockData());
-  }, [])
+const store = configureStore()
 
-  return (
-      <Router>
-        <div className="App">
-          <Nav/>
-          <Switch>
-            <Route path="/" exact  component={Home} />
-            <Route path="/portfolio" exact component={StockList} />
-            <Route path="/stock/:symbol/period/:period" exact  component={Stock}/>
-            <Route path="/action/:actionType/:symbol" exact component={Action}/>
-          </Switch>
-        </div>
-      </Router>
-  ) 
+function App() {
+  const { isAuthenticated, isLoading, user } = useAuth0()
+  console.log('auth ', user, isAuthenticated, isLoading)
+  // const val = await getAccessTokenSilently()
+  if(isLoading){
+    return <FullPageSpiner/>
+  }
+  return isAuthenticated ? (
+    <AuthenticatedApp user={user}/> 
+  ) : ( 
+    <Provider store={store}>
+      <UnauthenticatedApp />
+    </Provider>
+    )
 }
+
+function UnauthenticatedApp(props){
+  return (
+    <div className="App">
+      {/* <Nav/> */}
+      <Switch>
+        {/* <Route path="/" exact component={Nav} /> */}
+        <Route path="/" exact  component={Home} />
+        <Route path="/portfolio" exact component={StockList} />
+        <Route path="/stock/:symbol/period/:period" exact  component={Stock}/>
+        <Route path="/action/:actionType/:symbol" exact component={Action}/>
+      </Switch>
+    </div>
+  )
+}
+
+function AuthenticatedApp({user}){
+  // console.log(user)
+  return (<h1>{user.nickname} le best du monde</h1>)
+}
+
+
 const mapStateToProps = state => ({
   stockData: state.requestReducer.stockData,
   isFetching: state.requestReducer.isFetching,
 })
-// export default App;
 
-export default connect(mapStateToProps)(App);
+connect(mapStateToProps)(UnauthenticatedApp);
+export default App

@@ -22,10 +22,10 @@ const GreenRed = styled.div`
 const Spiner = () => {
     return (
         <>
-            <h1>
+            <h4>
                 <span className="icon-spinner9" style={{color: 'rgb(36, 36, 114)'}}></span>
                 &nbsp; Loading
-            </h1>
+            </h4>
         </>
     )
 }
@@ -101,7 +101,7 @@ const ActionButton = styled.button(
         borderRadius: '3px',
         height: '30px',
         width: '60px',
-        fontSize: '1.2rem',
+        fontSize: '0.9rem',
         cursor: 'pointer'
     },
     ({variant='primary'}) => btnVariants[variant]
@@ -128,10 +128,25 @@ const FormGroup = styled.div({
     fontSize: '16px'
 })
 
+const StockTendency = ({children, change, changePercent, style, fs, onClick}) => {
+    return (
+        <GreenRed style={style} onClick={onClick}>
+            {children}
+            <span className={change > 0? 'green': 'red'} style={{fontSize: fs}}>
+                {change > 0 ? '+' : null }{change}
+            </span>
+            <span className={change > 0? 'green': 'red'} style={{fontSize: fs}}>
+                ({changePercent}%)
+            </span>
+        </GreenRed>
+    )
+}
+
 export {
     Spiner,
     FullPageSpiner,
     actionBtnStyle,
+    StockTendency,
     Dialog,
     CircleButton,
     ActionButton,

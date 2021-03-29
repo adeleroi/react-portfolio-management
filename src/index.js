@@ -1,10 +1,15 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import Root from './containers/Root'
+// import Root from './containers/Root'
+import { AppProvider } from './context/auth-provider'
+import App from './App'
+
 ReactDOM.render(
   <React.StrictMode>
-    <Root />
+    <AppProvider>
+      <App/>
+    </AppProvider>
   </React.StrictMode>,
   document.getElementById('root')
 );
