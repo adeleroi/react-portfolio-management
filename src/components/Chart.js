@@ -1,5 +1,11 @@
 import React, {Component } from 'react'
-import { select, line, area, axisBottom, axisRight, scaleLinear, extent, max, min, selectAll, scaleTime } from 'd3';
+import { 
+    select, line, area,
+    axisBottom, axisRight,
+    scaleLinear, extent,
+    max, min, selectAll, scaleTime,
+    bisector, pointer, style,
+} from 'd3';
 // import * as d3 from 'd3'
 import * as d3  from 'd3-fetch'
 import { Spiner } from './lib';
@@ -44,7 +50,7 @@ class Chart extends Component {
         // get and parse the data
         loadHistorycalPrices.then(val => {
             this.setState({status: 'resolved'})
-            console.log('val', val)
+            // console.log('val', val)
             const date = period === "1D" ? 
             val.map(el => {
                 const dt = `${el.label}`.length >= 7 ?
@@ -55,14 +61,14 @@ class Chart extends Component {
             }) 
             : val.map(el => el.date);
 
-            console.log('date ', date)
+            // console.log('date ', date)
             const valeur = val.map(el => el.close);
             const volume = val.map(el => el.volume);
             const liste = []
             // const parseTime = timeFormat("%H:%M")
             liste.push(date.map((val, index)=> ({date: new Date(val), value: valeur[index], volume: volume[index]})))
             const data = liste[0]
-            console.log('data', data)
+            // console.log('data', data)
             // console.log(typeof(data[1].value))
             const height = 400;
             const width = 865//764;
@@ -200,6 +206,110 @@ class Chart extends Component {
                 .attr('height', d => {
                     return height - yVolume(d.volume) - 30
                 })
+
+                const focus = svg.append('g')
+                .attr('class', 'focus')
+                .style('display', 'none');
+        
+            focus.append('circle')
+                .attr('r', 2.5)
+                .style('fill', 'red')
+                .style('stroke', 'red')
+                .style('stroke-width', '2px')
+
+                focus.append('line')
+                .classed('x', true);
+        
+            focus.append('line')
+                .classed('y', true);
+        
+            focus.append('text')
+                .attr('x', 9)
+                .attr('dy', '.35em');
+
+            svg.append('rect')
+                .attr('class', 'overlay')
+                .attr('width', width)
+                .attr('height', height)
+                .on('mouseover', () => focus.style('display', null))
+                .on('mouseout', () => focus.style('display', 'none'))
+                .on('mousemove', mousemove);
+            
+            selectAll('.line')
+                .style('fill', 'none')
+                .style('stroke', 'steelblue')
+                .style('stroke-width', '1.5px')
+            
+
+            select('.overlay')
+                .style('fill', 'none')
+                .style('pointer-events', 'all')
+
+            selectAll('.focus')
+                .style('opacity', 0.7);
+
+            selectAll('.focus circle')
+                .style('fill', 'none')
+                .style('stroke', 'black')
+
+            selectAll('.focus line')
+                .style('fill', 'none')
+                .style('stroke', 'black')
+                .style('stroke-width', '0.7px')
+                .style('stroke-dasharray', '3 3')
+
+            const bisectDate = bisector(d => d.date).left;
+            function mousemove(event) {
+                const correspondingDate = x.invert(pointer(event)[0])
+                //gets insertion point
+                const i = bisectDate(data, correspondingDate)
+                const d0 = i !== 0 ? data[i-1]: data[i]
+                const d1 = data[i]
+                const currentPoint = correspondingDate - d0?.date > d1?.date - correspondingDate ? d1 : d0
+                console.log(width-x(currentPoint.date))
+                focus.attr('transform',`translate(${x(currentPoint?.date)}, ${y(currentPoint?.value)})`);
+                focus
+                    .select('line.x')
+                    .attr('x1', 0)
+                    .attr('x2', width - x(currentPoint?.date))
+                    .attr('y1', 0)
+                    .attr('y2', 0);
+                focus
+                    .select('line.y')
+                    .attr('x1', 0)
+                    .attr('x2', 0)
+                    .attr('y1', 0)
+                    .attr('y2', height - y(currentPoint?.value));
+                
+                    updateLegends(currentPoint)
+            }
+            const updateLegends = currentData => {
+                selectAll('.lineLegend').remove();
+                const legendKeys = Object.keys(data[0]);
+                const lineLegend = svg
+                  .selectAll('.lineLegend')
+                  .data(legendKeys)
+                  .enter()
+                  .append('g')
+                  .attr('class', 'lineLegend')
+                  .attr('transform', (d, i) => {
+                    return `translate(0, ${i * 20})`;
+                  });
+                lineLegend
+                  .append('text')
+                  .text(d => {
+                    if (d === 'date') {
+                      return `${d}: ${currentData[d].toLocaleDateString()}`;
+                    } else if ( d === 'high' || d === 'how' || d === 'open' || d === 'value') {
+                      return `${d}: ${currentData[d].toFixed(2)}`;
+                    } else {
+                      return `${d}: ${currentData[d]} M`;
+                    }
+                  })
+                  .style('fill', 'black')
+                  .style('font-size', '12px')
+                  .attr('transform', 'translate(40,25)');
+                };
         } )
     }
     componentDidMount(){

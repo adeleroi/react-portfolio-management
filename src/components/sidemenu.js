@@ -3,11 +3,12 @@ import { titres } from '../store/actionTypes'
 import { StockTendency } from './lib'
 import { useParams, NavLink, Link } from 'react-router-dom'
 
-const SearchStock = ({stockData}) => {
+const SearchStock = ({stockData, onSubmitStock}) => {
     const { period } = useParams()
     // let history = useHistory()
-    console.log('stockdata', stockData)    
+    // console.log('stockdata', stockData)    
     const [stockList, setStockList] = React.useState(() => titres)
+    const [isValid, setValid] = React.useState(true)
     const filter = (data) => {
         let arr = []
         for (var stock of titres){
@@ -28,6 +29,17 @@ const SearchStock = ({stockData}) => {
     const Filter = (e) => {
         setStockList(filter(e.target.value))
     }
+
+    const handleSubmit = (e) => {
+        e.preventDefault()
+        const {submitedstock} = e.target.elements
+        if(!stockList.includes(submitedstock)){
+            setValid(false)
+            return 
+        }
+        console.log(e.target.elements)
+        onSubmitStock(submitedstock.value.toUpperCase())
+    }
     return (
         <div>
             <div style={{marginTop: '30px'}}>
@@ -38,14 +50,16 @@ const SearchStock = ({stockData}) => {
                     alt="logo-img"/>
                 </Link>
             </div>
-            <input onChange={e => Filter(e)} style={{
-                width: '90%', marginBottom: '15px',
-                paddingLeft: '10px', marginTop: '20px',
-                height: '25px', fontSize: '18px', borderRadius: '5px' 
-                }}
-                placeholder="Enter stock symbol"
-            />
-            { stockList && stockList.length ? (
+            <form onSubmit={handleSubmit}>
+                <input onChange={e => Filter(e)} style={{
+                    width: '90%', marginBottom: '15px',
+                    paddingLeft: '10px', marginTop: '20px',
+                    height: '25px', fontSize: '18px', borderRadius: '5px' 
+                    }}
+                    placeholder="Enter stock symbol"
+                id="submitedstock"/>
+            </form>
+            { stockList && stockList.length && isValid? (
                 <div style={{
                     listStyle: 'none', height: '150px',
                     overflowY: 'scroll'
@@ -88,12 +102,12 @@ const SearchStock = ({stockData}) => {
     )
 }
 
-const SideMenu = ({stockData}) => {
+const SideMenu = ({stockData, onSubmitStock}) => {
     return (
         <aside style={{height: '100vh', width: '250px', position: 'sticky',
         borderTop: 'none', top: '0px', color: 'white',
         backgroundImage: "linear-gradient(to bottom, rgb(36, 36, 114), #103131)"}}>
-            <SearchStock stockData={stockData}/>
+            <SearchStock stockData={stockData} onSubmitStock={onSubmitStock}/>
         </aside>
     )
 }

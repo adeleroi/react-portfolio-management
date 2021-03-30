@@ -34,7 +34,7 @@ import "@reach/dialog/styles.css"
 
 const Stock =  ({history, ...props}) => {
     const date = new Date().toDateString();
-    const {symbol} = props.match.params;
+    const {symbol, period} = props.match.params;
     const { isFetching, stockData, dispatch } = props;
     
     const aboutData = React.useCallback(symbol =>({
@@ -63,6 +63,9 @@ const Stock =  ({history, ...props}) => {
         history.push(`/stock/${symbol}/period/${period}`)
     }
 
+    const handleSubmitStock = (symbol) => {
+        history.push(`/stock/${symbol}/period/${period}`)
+    }
     React.useEffect(()=>{
         dispatch(fetchStockData());
     }, [dispatch])
@@ -72,7 +75,7 @@ const Stock =  ({history, ...props}) => {
     }
     return (
         <div style={{display: 'flex', justifyContent: 'space-between', minHeight: '100vh'}}>
-        <SideMenu stockData={stockData} />
+        <SideMenu stockData={stockData} period={period} onSubmitStock={handleSubmitStock}/>
         <div className="stock-container" style={{minHeight: '100vh',width: '80vw'}}>
             <StockMenuHeader stockData={stockData} symbol={symbol} date={date} {...props}/>
             <VisualizationProvider {...props}>
@@ -89,13 +92,13 @@ const Stock =  ({history, ...props}) => {
                     <HistoricalChart symbol={symbol}/>
                 </VisualizationLayout>
             </VisualizationProvider>
-            <div style={{display: 'flex'}}>
+            {/* <div style={{display: 'flex'}}>
                 <News symbol={symbol}/>
                 <div style={{display: 'grid'}}>
                     <CompanyInfo data={aboutData(symbol)} stockData={stockData} symbol={symbol} title="About"/>
                     <CompanyInfo data={statisticData(symbol)} stockData={stockData} symbol={symbol} title="Statistics"/>
                 </div>
-            </div>
+            </div> */}
         </div>
         </div>
     )
